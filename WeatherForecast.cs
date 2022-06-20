@@ -1,4 +1,4 @@
-﻿namespace megastonks;
+﻿namespace Megastonks;
 
 public class WeatherForecast
 {

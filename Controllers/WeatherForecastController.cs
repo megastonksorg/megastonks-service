@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace megastonks.Controllers;
+namespace Megastonks.Controllers;
 
 [ApiController]
 [Route("[controller]")]
