@@ -17,7 +17,7 @@ namespace Megastonks.Controllers
 
         [HttpPost("authenticate")]
         public ActionResult<AuthenticateResponse> Authenticate(AuthenticateRequest model)
-        { 
+        {
             var response = _accountService.Authenticate(model, ipAddress());
             setTokenCookie(response.RefreshToken);
             return Ok(response);
@@ -42,4 +42,3 @@ namespace Megastonks.Controllers
         }
     }
 }
-
