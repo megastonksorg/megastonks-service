@@ -15,6 +15,13 @@ namespace Megastonks.Controllers
             _accountService = accountService;
         }
 
+        [HttpGet("requestAuthentication")]
+        public ActionResult<string> RequestAuthentication()
+        {
+            var response = _accountService.RequestAuthentication();
+            return Ok(response);
+        }
+
         [HttpPost("authenticate")]
         public ActionResult<AuthenticateResponse> Authenticate(AuthenticateRequest model)
         {

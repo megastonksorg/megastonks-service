@@ -13,6 +13,7 @@ namespace Megastonks.Services
 {
 	public interface IAccountService
     {
+        string RequestAuthentication();
 		AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress);
     }
 
@@ -32,6 +33,10 @@ namespace Megastonks.Services
             _appSettings = appSettings.Value;
         }
 
+        public string RequestAuthentication()
+        {
+            return _appSettings.MessageToSign;
+        }
 
         public AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress)
         {
