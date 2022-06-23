@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Megastonks.Helpers;
-using Megastonks.Models.Account;
-using Megastonks.Entities;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Megastonks.Helpers;
+using Megastonks.Models.Account;
+using Megastonks.Entities;
 
 namespace Megastonks.Services
 {
@@ -35,29 +35,35 @@ namespace Megastonks.Services
 
         public AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress)
         {
-            var account = _context.Accounts.SingleOrDefault(x => x.WalletAddress == model.WalletAddress);
+            if (EthereumSigner.IsSignatureValid(_appSettings.MessageToSign, model.WalletAddress, model.Signature)) {
+                var account = _context.Accounts.SingleOrDefault(x => x.WalletAddress == model.WalletAddress);
 
-            if (account == null)
-                throw new AppException("Account Not Found");
+                if (account == null)
+                    throw new AppException("Account Not Found");
 
-            // authentication successful so generate jwt and refresh tokens
-            var jwtToken = generateJwtToken(account);
-            var refreshToken = generateRefreshToken(ipAddress);
+                // authentication successful so generate jwt and refresh tokens
+                var jwtToken = generateJwtToken(account);
+                var refreshToken = generateRefreshToken(ipAddress);
 
 
-            // remove old refresh tokens from account
-            removeOldRefreshTokens(account);
+                // remove old refresh tokens from account
+                removeOldRefreshTokens(account);
 
-            account.RefreshTokens.Add(refreshToken);
+                account.RefreshTokens.Add(refreshToken);
 
-            // save changes to db
-            _context.Update(account);
-            _context.SaveChanges();
+                // save changes to db
+                _context.Update(account);
+                _context.SaveChanges();
 
-            var response = _mapper.Map<AuthenticateResponse>(account);
-            response.JwtToken = jwtToken;
-            response.RefreshToken = refreshToken.Token;
-            return response;
+                var response = _mapper.Map<AuthenticateResponse>(account);
+                response.JwtToken = jwtToken;
+                response.RefreshToken = refreshToken.Token;
+                return response;
+            }
+            else
+            {
+                throw new AppException("Invalid Signature");
+            }
         }
 
         private string generateJwtToken(Account account)
