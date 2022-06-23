@@ -17,6 +17,7 @@
     <PackageReference Include="BCrypt-Core" Version="2.0.0" />
     <PackageReference Include="BCrypt.Net-Core" Version="1.6.0" />
     <PackageReference Include="Nethereum.Signer" Version="4.6.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,6 +35,7 @@
     <None Remove="BCrypt-Core" />
     <None Remove="BCrypt.Net-Core" />
     <None Remove="Nethereum.Signer" />
+    <None Remove="AutoMapper.Extensions.Microsoft.DependencyInjection" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Middleware\" />

@@ -5,7 +5,7 @@ using Megastonks.Models.Account;
 namespace Megastonks.Controllers
 {
     [Controller]
-    [Route("[controller")]
+    [Route("[controller]")]
     public class AccountController : BaseController
     {
         private readonly IAccountService _accountService;
