@@ -5,11 +5,10 @@ namespace Megastonks.Models.Account
 	public class AuthenticateRequest
 	{
         [Required]
-        [EmailAddress]
-        public string Email { get; set; }
+        public string WalletAddress { get; set; }
 
         [Required]
-        public string Password { get; set; }
+        public string Signature { get; set; }
     }
 }
 

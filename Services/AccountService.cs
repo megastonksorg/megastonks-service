@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using BC = BCrypt.Net.BCrypt;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Megastonks.Helpers;
@@ -36,24 +35,10 @@ namespace Megastonks.Services
 
         public AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress)
         {
-            var account = _context.Accounts.SingleOrDefault(x => x.Email == model.Email);
+            var account = _context.Accounts.SingleOrDefault(x => x.WalletAddress == model.WalletAddress);
 
-            if (account == null || !account.IsVerified)
-                throw new AppException("Email or password is incorrect");
-
-            //Check if account is locked
-            if (account.AccountLocked && account.AccountLockTimeout <= DateTime.UtcNow)
-            {
-                account.AccountLocked = false;
-                account.LoginAttempt = 0;
-                // save changes to db
-                _context.Update(account);
-                _context.SaveChanges();
-            }
-            else if (account.AccountLocked)
-            {
-                throw new AppException("Your account has been locked. You are Unable to Login at this time. Please wait 1 hour before trying again.");
-            }
+            if (account == null)
+                throw new AppException("Account Not Found");
 
             // authentication successful so generate jwt and refresh tokens
             var jwtToken = generateJwtToken(account);
@@ -64,8 +49,6 @@ namespace Megastonks.Services
             removeOldRefreshTokens(account);
 
             account.RefreshTokens.Add(refreshToken);
-
-
 
             // save changes to db
             _context.Update(account);
@@ -117,10 +100,6 @@ namespace Megastonks.Services
             account.RefreshTokens.RemoveAll(x =>
                 x.IsActive &&
                 x.Created <= DateTime.UtcNow);
-
-            // account.RefreshTokens.RemoveAll(x =>
-            //!x.IsActive &&
-            //x.Created.AddDays(_appSettings.RefreshTokenTTL) <= DateTime.UtcNow);
         }
     }
 }

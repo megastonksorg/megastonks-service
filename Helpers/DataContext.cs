@@ -19,5 +19,12 @@ namespace Megastonks.Helpers
 			// connect to SqlServer database
 			options.UseSqlServer(Configuration.GetConnectionString("WebApiDatabase"));
 		}
+
+		protected override void OnModelCreating(ModelBuilder builder)
+		{
+			builder.Entity<Account>()
+				.HasIndex(x => x.WalletAddress)
+				.IsUnique();
+		}
 	}
 }
