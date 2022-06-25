@@ -8,14 +8,21 @@ namespace Megastonks.Helpers
 	{
 		public static bool IsSignatureValid(string message, string walletAddress, string signature)
         {
-			var sha3Keccak = new Sha3Keccack();
-			string hashedMessage = sha3Keccak.CalculateHash(message);
-			byte[] hashedMessageToBytes = ConvertHexStringToByteArray(hashedMessage);
+            if (IsAddressValid(walletAddress))
+            {
+                var sha3Keccak = new Sha3Keccack();
+                string hashedMessage = sha3Keccak.CalculateHash(message);
+                byte[] hashedMessageToBytes = ConvertHexStringToByteArray(hashedMessage);
 
-            var signer = new MessageSigner();
-            var addressFromSignature = signer.EcRecover(hashedMessageToBytes, signature);
+                var signer = new MessageSigner();
+                var addressFromSignature = signer.EcRecover(hashedMessageToBytes, signature);
 
-            return addressFromSignature == walletAddress;
+                return addressFromSignature == walletAddress;
+            }
+            else
+            {
+                throw new AppException("Invalid address used for validation");
+            }
         }
 
         private static byte[] ConvertHexStringToByteArray(string hexString)
@@ -34,6 +41,11 @@ namespace Megastonks.Helpers
 
             return data;
         }
+
+        private static bool IsAddressValid(string address)
+        {
+            var addressUtil = new AddressUtil();
+            return addressUtil.IsValidEthereumAddressHexFormat(address) && addressUtil.IsChecksumAddress(address);
+        }
     }
 }
-
