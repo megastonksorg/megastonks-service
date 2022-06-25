@@ -45,7 +45,9 @@ namespace Megastonks.Helpers
         private static bool IsAddressValid(string address)
         {
             var addressUtil = new AddressUtil();
-            return addressUtil.IsValidEthereumAddressHexFormat(address) && addressUtil.IsChecksumAddress(address);
+            return addressUtil.IsValidAddressLength(address) &&
+                addressUtil.IsValidEthereumAddressHexFormat(address) &&
+                addressUtil.IsChecksumAddress(address);
         }
     }
 }
