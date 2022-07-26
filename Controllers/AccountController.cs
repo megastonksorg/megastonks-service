@@ -30,6 +30,14 @@ namespace Megastonks.Controllers
             return Ok(response);
         }
 
+        [HttpPost("register")]
+        public ActionResult<Uri> Register()
+        {
+            IFormFile file = Request.Form.Files.FirstOrDefault();
+            var response = _accountService.Register(file);
+            return Ok(response);
+        }
+
         private void setTokenCookie(string token)
         {
             var cookieOptions = new CookieOptions

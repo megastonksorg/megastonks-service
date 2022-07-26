@@ -15,6 +15,7 @@ namespace Megastonks.Services
     {
         string RequestAuthentication();
 		AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress);
+        Uri Register(IFormFile file);
     }
 
 	public class AccountService : IAccountService
@@ -23,14 +24,18 @@ namespace Megastonks.Services
         private readonly IMapper _mapper;
         private readonly AppSettings _appSettings;
 
+        private readonly FileStorageService fileStorageService;
+
         public AccountService(
             DataContext context,
             IMapper mapper,
+            IConfiguration configuration,
             IOptions<AppSettings> appSettings)
         {
             _context = context;
             _mapper = mapper;
             _appSettings = appSettings.Value;
+            fileStorageService = new FileStorageService(configuration);
         }
 
         public string RequestAuthentication()
@@ -73,6 +78,18 @@ namespace Megastonks.Services
                 }
             }
             catch(Exception e)
+            {
+                throw new AppException(e.Message);
+            }
+        }
+
+        public Uri Register(IFormFile file)
+        {
+            try
+            {
+                return fileStorageService.UploadImage(file);
+            }
+            catch (Exception e)
             {
                 throw new AppException(e.Message);
             }

@@ -13,19 +13,24 @@ namespace Megastonks.Services
             Configuration = configuration;
         }
 
-        public Uri UploadImage(byte [] imageFile)
+        public Uri UploadImage(IFormFile file)
         {
-            BlobServiceClient blobServiceClient = new BlobServiceClient(Configuration.GetConnectionString("AzureBlobStorage"));
-            BlobContainerClient blobContainerClient = blobServiceClient.GetBlobContainerClient("images");
+            const string allowedFileExtension = ".png";
+            string fileExtension = Path.GetExtension(file.FileName);
+            if (file.Length <= 2000000 && allowedFileExtension == fileExtension)
+            {
+                BlobServiceClient blobServiceClient = new BlobServiceClient(Configuration.GetConnectionString("AzureBlobStorage"));
+                BlobContainerClient blobContainerClient = blobServiceClient.GetBlobContainerClient("images");
 
-            string fileName = $"{Guid.NewGuid()}.png";
-            BlobClient blobClient = blobContainerClient.GetBlobClient(fileName);
-            using var memoryStream = new MemoryStream(imageFile, false);
-            if (memoryStream != null) {
-                blobClient.Upload(memoryStream);
+                string fileName = $"{Guid.NewGuid()}{allowedFileExtension}";
+                BlobClient blobClient = blobContainerClient.GetBlobClient(fileName);
+                blobClient.Upload(file.OpenReadStream());
+                return blobClient.Uri;
             }
-
-            return blobClient.Uri;
+            else
+            {
+                throw new AppException(message: "File Size too long of of incorrect format. Please upload a file that is less than 2MB and is a PNG");
+            }
         }
     }
 }
