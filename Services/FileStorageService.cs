@@ -17,7 +17,15 @@ namespace Megastonks.Services
         {
             const string allowedFileExtension = ".png";
             string fileExtension = Path.GetExtension(file.FileName);
-            if (file.Length <= 2000000 && allowedFileExtension == fileExtension)
+            if (file.Length > 2000000)
+            {
+                throw new AppException(message: "File Size too large: Please upload a file that is less than 2MB");
+            }
+            else if (allowedFileExtension != fileExtension)
+            {
+                throw new AppException(message: "Invalid File Format: Please upload a png file");
+            }
+            else
             {
                 BlobServiceClient blobServiceClient = new BlobServiceClient(Configuration.GetConnectionString("AzureBlobStorage"));
                 BlobContainerClient blobContainerClient = blobServiceClient.GetBlobContainerClient("images");
@@ -26,10 +34,6 @@ namespace Megastonks.Services
                 BlobClient blobClient = blobContainerClient.GetBlobClient(fileName);
                 blobClient.Upload(file.OpenReadStream());
                 return blobClient.Uri;
-            }
-            else
-            {
-                throw new AppException(message: "File Size too long of of incorrect format. Please upload a file that is less than 2MB and is a PNG");
             }
         }
     }
