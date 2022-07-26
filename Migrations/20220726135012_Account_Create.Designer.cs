@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Megastonks.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220623073029_Initial_Create_Account")]
-    partial class Initial_Create_Account
+    [Migration("20220726135012_Account_Create")]
+    partial class Account_Create
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -39,6 +39,10 @@ namespace Megastonks.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

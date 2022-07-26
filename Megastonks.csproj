@@ -42,6 +42,7 @@
     <None Remove="Nethereum.Signer" />
     <None Remove="AutoMapper.Extensions.Microsoft.DependencyInjection" />
     <None Remove="Azure.Storage.Blobs" />
+    <None Remove="Migrations\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Middleware\" />
@@ -50,5 +51,6 @@
     <Folder Include="Services\" />
     <Folder Include="Models\" />
     <Folder Include="Models\Account\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 </Project>

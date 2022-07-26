@@ -40,6 +40,10 @@ namespace Megastonks.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsOnboarded")
                         .HasColumnType("bit");
 
