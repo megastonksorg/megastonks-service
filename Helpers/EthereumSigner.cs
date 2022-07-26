@@ -42,7 +42,7 @@ namespace Megastonks.Helpers
             return data;
         }
 
-        private static bool IsAddressValid(string address)
+        public static bool IsAddressValid(string address)
         {
             var addressUtil = new AddressUtil();
             return addressUtil.IsValidAddressLength(address) &&

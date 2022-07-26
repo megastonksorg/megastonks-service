@@ -30,6 +30,13 @@ namespace Megastonks.Controllers
             return Ok(response);
         }
 
+        [HttpPost("register")]
+        public ActionResult<RegisterResponse> Register(RegisterRequest model)
+        {
+            var response = _accountService.Register(model);
+            return Ok(response);
+        }
+
         private void setTokenCookie(string token)
         {
             var cookieOptions = new CookieOptions

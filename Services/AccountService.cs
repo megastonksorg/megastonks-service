@@ -15,6 +15,7 @@ namespace Megastonks.Services
     {
         string RequestAuthentication();
 		AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress);
+        RegisterResponse Register(RegisterRequest model);
     }
 
 	public class AccountService : IAccountService
@@ -38,6 +39,41 @@ namespace Megastonks.Services
             return _appSettings.MessageToSign;
         }
 
+        public RegisterResponse Register(RegisterRequest model)
+        {
+            try
+            {
+               if (isRegisterModelValid(model))
+               {
+                    if (_context.Accounts.Any(x => x.WalletAddress == model.WalletAddress))
+                    {
+                        throw new AppException(message: "User Exists: Please login");
+                    }
+
+                    // map model to new account object
+                    var account = _mapper.Map<Account>(model);
+
+                    // first registered account is an admin
+                    var isFirstAccount = _context.Accounts.Count() == 0;
+                    account.Role = isFirstAccount ? Role.Admin : Role.User;
+                    account.Created = DateTime.UtcNow;
+
+                    // save account
+                    _context.Accounts.Add(account);
+                    _context.SaveChanges();
+
+                    return _mapper.Map<RegisterResponse>(_context.Accounts.FirstOrDefault(x => x.WalletAddress == account.WalletAddress));
+                }
+               else
+               {
+                    throw new AppException(message: "Invalid User Data: Please ensure the wallet address is a valid ethereum address and the names are not empty");
+               }
+            }
+            catch (Exception e)
+            {
+                throw new AppException(message: e.Message);
+            }
+        }
         public AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress)
         {
             try
@@ -118,6 +154,14 @@ namespace Megastonks.Services
             account.RefreshTokens.RemoveAll(x =>
                 x.IsActive &&
                 x.Created <= DateTime.UtcNow);
+        }
+
+        private bool isRegisterModelValid(RegisterRequest model)
+        {
+            return
+                EthereumSigner.IsAddressValid(model.WalletAddress) &&
+                !string.IsNullOrEmpty(model.FullName) &&
+                !string.IsNullOrEmpty(model.UserName);
         }
     }
 }
