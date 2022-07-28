@@ -3,16 +3,17 @@ using Megastonks.Helpers;
 
 namespace Megastonks.Services
 {
-    public interface IFileUploadService
+    public interface IMediaUploadService
     {
         Uri UploadImage(IFormFile file);
+        Uri UploadImage(byte[] imageData);
     }
 
-    public class FileUploadService : IFileUploadService
+    public class MediaUploadService : IMediaUploadService
     {
         private readonly IConfiguration Configuration;
 
-        public FileUploadService(IConfiguration configuration)
+        public MediaUploadService(IConfiguration configuration)
         {
             Configuration = configuration;
         }
@@ -46,6 +47,37 @@ namespace Megastonks.Services
                     blobClient.Upload(file.OpenReadStream());
                     return blobClient.Uri;
                 }
+            }
+            catch (Exception e)
+            {
+                throw new AppException(e.Message);
+            }
+        }
+
+        public Uri UploadImage(byte[] imageData)
+        {
+            try
+            {
+                if (imageData == null)
+                {
+                    throw new AppException(message: "No Data In Request: Please attach an image data to the request");
+                }
+
+                if (imageData.Length > 2000000)
+                {
+                    throw new AppException(message: "Image Size too large: Please upload an image that is less than 2MB");
+                }
+
+                Stream stream = new MemoryStream(imageData);
+                const string allowedFileExtension = ".png";
+
+                BlobServiceClient blobServiceClient = new(Configuration.GetConnectionString("AzureBlobStorage"));
+                BlobContainerClient blobContainerClient = blobServiceClient.GetBlobContainerClient("images");
+
+                string fileName = $"{Guid.NewGuid()}{allowedFileExtension}";
+                BlobClient blobClient = blobContainerClient.GetBlobClient(fileName);
+                blobClient.Upload(stream);
+                return blobClient.Uri;
             }
             catch (Exception e)
             {

@@ -19,7 +19,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 //Configure Scoped Services
 builder.Services.AddScoped<IAccountService, AccountService>();
-builder.Services.AddScoped<IFileUploadService, FileUploadService>();
+builder.Services.AddScoped<IMediaUploadService, MediaUploadService>();
 
 var app = builder.Build();
 
