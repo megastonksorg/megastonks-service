@@ -63,12 +63,13 @@ namespace Megastonks.Services
                     throw new AppException(message: "No Data In Request: Please attach an image data to the request");
                 }
 
-                if (imageData.Length > 2000000)
+                Stream stream = new MemoryStream(imageData);
+
+                if (stream.Length > 2097152)
                 {
                     throw new AppException(message: "Image Size too large: Please upload an image that is less than 2MB");
                 }
 
-                Stream stream = new MemoryStream(imageData);
                 const string allowedFileExtension = ".png";
 
                 BlobServiceClient blobServiceClient = new(Configuration.GetConnectionString("AzureBlobStorage"));

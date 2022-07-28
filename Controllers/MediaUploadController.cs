@@ -14,7 +14,7 @@ namespace Megastonks.Controllers
             _mediaUploadService = mediaUploadService;
         }
 
-        [HttpPut("image")]
+        [HttpPut("imageFile")]
         public ActionResult<Uri> Image()
         {
             IFormFile file = Request.Form.Files.FirstOrDefault();
@@ -23,7 +23,7 @@ namespace Megastonks.Controllers
         }
 
         [HttpPut("image")]
-        public ActionResult<Uri> Image(byte[] imageData)
+        public ActionResult<Uri> Image([FromBody] byte[] imageData)
         {
             var response = _mediaUploadService.UploadImage(imageData);
             return Ok(response);
