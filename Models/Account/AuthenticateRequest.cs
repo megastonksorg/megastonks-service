@@ -11,4 +11,3 @@ namespace Megastonks.Models.Account
         public string Signature { get; set; }
     }
 }
-

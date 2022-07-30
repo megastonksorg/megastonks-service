@@ -18,4 +18,3 @@ namespace Megastonks.Models.Account
         public string RefreshToken { get; set; }
     }
 }
-
