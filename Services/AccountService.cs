@@ -20,15 +20,18 @@ namespace Megastonks.Services
 
 	public class AccountService : IAccountService
 	{
+        private readonly ILogger<AccountService> _logger;
         private readonly DataContext _context;
         private readonly IMapper _mapper;
         private readonly AppSettings _appSettings;
 
         public AccountService(
+            ILogger<AccountService> logger,
             DataContext context,
             IMapper mapper,
             IOptions<AppSettings> appSettings)
         {
+            _logger = logger;
             _context = context;
             _mapper = mapper;
             _appSettings = appSettings.Value;
@@ -71,6 +74,7 @@ namespace Megastonks.Services
             }
             catch (Exception e)
             {
+                _logger.LogError(e.Message);
                 throw new AppException(message: e.Message);
             }
         }

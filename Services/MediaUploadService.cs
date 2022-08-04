@@ -11,11 +11,13 @@ namespace Megastonks.Services
 
     public class MediaUploadService : IMediaUploadService
     {
-        private readonly IConfiguration Configuration;
+        private readonly ILogger<MediaUploadService> _logger;
+        private readonly IConfiguration _configuration;
 
-        public MediaUploadService(IConfiguration configuration)
+        public MediaUploadService(ILogger<MediaUploadService> logger, IConfiguration configuration)
         {
-            Configuration = configuration;
+            _logger = logger;
+            _configuration = configuration;
         }
 
         public Uri UploadImage(IFormFile file)
@@ -39,7 +41,7 @@ namespace Megastonks.Services
                 }
                 else
                 {
-                    BlobServiceClient blobServiceClient = new BlobServiceClient(Configuration.GetConnectionString("AzureBlobStorage"));
+                    BlobServiceClient blobServiceClient = new BlobServiceClient(_configuration.GetConnectionString("AzureBlobStorage"));
                     BlobContainerClient blobContainerClient = blobServiceClient.GetBlobContainerClient("images");
 
                     string fileName = $"{Guid.NewGuid()}{allowedFileExtension}";
@@ -72,7 +74,7 @@ namespace Megastonks.Services
 
                 const string allowedFileExtension = ".png";
 
-                BlobServiceClient blobServiceClient = new(Configuration.GetConnectionString("AzureBlobStorage"));
+                BlobServiceClient blobServiceClient = new(_configuration.GetConnectionString("AzureBlobStorage"));
                 BlobContainerClient blobContainerClient = blobServiceClient.GetBlobContainerClient("images");
 
                 string fileName = $"{Guid.NewGuid()}{allowedFileExtension}";
@@ -82,6 +84,7 @@ namespace Megastonks.Services
             }
             catch (Exception e)
             {
+                _logger.LogError(e.Message);
                 throw new AppException(e.Message);
             }
         }

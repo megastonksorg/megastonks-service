@@ -23,6 +23,7 @@
     <PackageReference Include="Nethereum.Signer" Version="4.6.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.13.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,6 +44,7 @@
     <None Remove="AutoMapper.Extensions.Microsoft.DependencyInjection" />
     <None Remove="Azure.Storage.Blobs" />
     <None Remove="Migrations\" />
+    <None Remove="Microsoft.ApplicationInsights.AspNetCore" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Middleware\" />

@@ -4,8 +4,8 @@ namespace Megastonks.Models.Account
 {
 	public class AuthenticateResponse
 	{
-        public int Id { get; set; }
         public string WalletAddress { get; set; }
+        public string FullName { get; set; }
         public string UserName { get; set; }
         public string ProfilePhoto { get; set; }
         public string Currency { get; set; }
