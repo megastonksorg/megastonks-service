@@ -48,6 +48,10 @@ namespace Megastonks.Services
             {
                if (isRegisterModelValid(model))
                {
+                    if (!model.AcceptTerms)
+                    {
+                        throw new AppException(message: "User must accept terms to register");
+                    }
                     if (_context.Accounts.Any(x => x.WalletAddress == model.WalletAddress))
                     {
                         throw new AppException(message: "User Exists: Please login");
@@ -58,6 +62,7 @@ namespace Megastonks.Services
 
                     // first registered account is an admin
                     var isFirstAccount = _context.Accounts.Count() == 0;
+                    account.Currency = "USD";
                     account.Role = isFirstAccount ? Role.Admin : Role.User;
                     account.Created = DateTime.UtcNow;
 

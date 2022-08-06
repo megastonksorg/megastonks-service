@@ -31,7 +31,7 @@ namespace Megastonks.Controllers
         }
 
         [HttpPost("register")]
-        public ActionResult<RegisterResponse> Register(RegisterRequest model)
+        public ActionResult<RegisterResponse> Register([FromBody] RegisterRequest model)
         {
             var response = _accountService.Register(model);
             return Ok(response);

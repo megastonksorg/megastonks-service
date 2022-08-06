@@ -9,6 +9,8 @@ namespace Megastonks.Helpers
 		public AutoMapperProfile()
 		{
 			CreateMap<Account, AuthenticateResponse>();
+			CreateMap<RegisterRequest, Account>();
+			CreateMap<Account, RegisterResponse>();
 		}
 	}
 }
