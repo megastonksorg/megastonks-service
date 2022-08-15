@@ -59,6 +59,7 @@ namespace Megastonks.Services
                     }
 
                     // map model to new account object
+                    model.UserName = model.UserName.Trim();
                     var account = _mapper.Map<Account>(model);
 
                     // first registered account is an admin
@@ -127,8 +128,15 @@ namespace Megastonks.Services
 
         public bool IsUserNameAvailable(string userName)
         {
-            var account = _context.Accounts.SingleOrDefault(x => x.UserName == userName.Trim());
-            return account == null;
+            if (isUserNameValid(userName))
+            {
+                var account = _context.Accounts.SingleOrDefault(x => x.UserName == userName.Trim());
+                return account == null;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         private string generateJwtToken(Account account)
@@ -178,7 +186,13 @@ namespace Megastonks.Services
             return
                 EthereumSigner.IsAddressValid(model.WalletAddress) &&
                 !string.IsNullOrEmpty(model.FullName) &&
-                !string.IsNullOrEmpty(model.UserName);
+                isUserNameValid(model.UserName);
+        }
+
+        private bool isUserNameValid(string userName)
+        {
+            string userNameTrimmed = userName.Trim();
+            return !string.IsNullOrEmpty(userNameTrimmed) && userNameTrimmed.Length > 2;
         }
     }
 }
