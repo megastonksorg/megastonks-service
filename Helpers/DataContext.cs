@@ -23,11 +23,7 @@ namespace Megastonks.Helpers
 		protected override void OnModelCreating(ModelBuilder builder)
 		{
 			builder.Entity<Account>()
-				.HasIndex(x => x.WalletAddress)
-				.IsUnique();
-
-			builder.Entity<Account>()
-				.HasIndex(x => x.UserName)
+				.HasIndex(x => new { x.WalletAddress, x.UserName })
 				.IsUnique();
 		}
 	}

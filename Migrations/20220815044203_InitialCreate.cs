@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Megastonks.Migrations
 {
-    public partial class Account_Create : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -17,7 +17,7 @@ namespace Megastonks.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     WalletAddress = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProfilePhoto = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Currency = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AcceptTerms = table.Column<bool>(type: "bit", nullable: false),
@@ -59,9 +59,9 @@ namespace Megastonks.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Accounts_WalletAddress",
+                name: "IX_Accounts_WalletAddress_UserName",
                 table: "Accounts",
-                column: "WalletAddress",
+                columns: new[] { "WalletAddress", "UserName" },
                 unique: true);
 
             migrationBuilder.CreateIndex(

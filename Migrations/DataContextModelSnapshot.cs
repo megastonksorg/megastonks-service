@@ -59,7 +59,7 @@ namespace Megastonks.Migrations
 
                     b.Property<string>("UserName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime?>("Verified")
                         .HasColumnType("datetime2");
@@ -70,7 +70,7 @@ namespace Megastonks.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("WalletAddress")
+                    b.HasIndex("WalletAddress", "UserName")
                         .IsUnique();
 
                     b.ToTable("Accounts");
