@@ -22,6 +22,13 @@ namespace Megastonks.Controllers
             return Ok(response);
         }
 
+        [HttpPost("register")]
+        public ActionResult<RegisterResponse> Register([FromBody] RegisterRequest model)
+        {
+            var response = _accountService.Register(model);
+            return Ok(response);
+        }
+
         [HttpPost("authenticate")]
         public ActionResult<AuthenticateResponse> Authenticate(AuthenticateRequest model)
         {
@@ -30,10 +37,10 @@ namespace Megastonks.Controllers
             return Ok(response);
         }
 
-        [HttpPost("register")]
-        public ActionResult<RegisterResponse> Register([FromBody] RegisterRequest model)
+        [HttpPost("isUserNameAvailable")]
+        public ActionResult<bool> IsUserNameAvailable(string userName)
         {
-            var response = _accountService.Register(model);
+            var response = _accountService.IsUserNameAvailable(userName);
             return Ok(response);
         }
 

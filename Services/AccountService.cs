@@ -16,6 +16,7 @@ namespace Megastonks.Services
         string RequestAuthentication();
 		AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress);
         RegisterResponse Register(RegisterRequest model);
+        bool IsUserNameAvailable(string userName);
     }
 
 	public class AccountService : IAccountService
@@ -83,6 +84,7 @@ namespace Megastonks.Services
                 throw new AppException(message: e.Message);
             }
         }
+
         public AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress)
         {
             try
@@ -121,6 +123,12 @@ namespace Megastonks.Services
             {
                 throw new AppException(e.Message);
             }
+        }
+
+        public bool IsUserNameAvailable(string userName)
+        {
+            var account = _context.Accounts.SingleOrDefault(x => x.UserName == userName.Trim());
+            return account == null;
         }
 
         private string generateJwtToken(Account account)
