@@ -128,7 +128,7 @@ namespace Megastonks.Services
 
         public bool IsUserNameAvailable(string userName)
         {
-            if (isUserNameValid(userName))
+            if (userName != null && isUserNameValid(userName))
             {
                 var account = _context.Accounts.SingleOrDefault(x => x.UserName == userName.Trim());
                 return account == null;
