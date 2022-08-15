@@ -25,6 +25,10 @@ namespace Megastonks.Helpers
 			builder.Entity<Account>()
 				.HasIndex(x => x.WalletAddress)
 				.IsUnique();
+
+			builder.Entity<Account>()
+				.HasIndex(x => x.UserName)
+				.IsUnique();
 		}
 	}
 }
