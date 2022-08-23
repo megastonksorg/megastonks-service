@@ -8,6 +8,7 @@ using System.Text;
 using Megastonks.Helpers;
 using Megastonks.Models.Account;
 using Megastonks.Entities;
+using Megastonks.Models;
 
 namespace Megastonks.Services
 {
@@ -16,7 +17,7 @@ namespace Megastonks.Services
         string RequestAuthentication();
 		AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress);
         RegisterResponse Register(RegisterRequest model);
-        bool IsUserNameAvailable(string userName);
+        SuccessResponse IsUserNameAvailable(string userName);
     }
 
 	public class AccountService : IAccountService
@@ -126,18 +127,24 @@ namespace Megastonks.Services
             }
         }
 
-        public bool IsUserNameAvailable(string userName)
+        public SuccessResponse IsUserNameAvailable(string userName)
         {
             if (userName != null && isUserNameValid(userName))
             {
                 var account = _context.Accounts.SingleOrDefault(x => x.UserName == userName.Trim());
-                return account == null;
+                if (account == null)
+                {
+                    return new SuccessResponse();
+                }
+
+                throw new AppException("Username unavailable");
             }
             else
             {
-                return false;
+                throw new AppException("Username is not valid or null");
             }
         }
+
 
         private string generateJwtToken(Account account)
         {

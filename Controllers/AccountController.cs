@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Megastonks.Services;
 using Megastonks.Models.Account;
+using Megastonks.Models;
 
 namespace Megastonks.Controllers
 {
@@ -38,7 +39,7 @@ namespace Megastonks.Controllers
         }
 
         [HttpPost("isUserNameAvailable")]
-        public ActionResult<bool> IsUserNameAvailable(string userName)
+        public ActionResult<SuccessResponse> IsUserNameAvailable(string userName)
         {
             var response = _accountService.IsUserNameAvailable(userName);
             return Ok(response);
