@@ -17,7 +17,7 @@ namespace Megastonks.Services
         string RequestAuthentication();
 		AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress);
         RegisterResponse Register(RegisterRequest model);
-        SuccessResponse IsUserNameAvailable(string userName);
+        EmptyResponse IsUserNameAvailable(string userName);
         SuccessResponse DoesAccountExist(string walletAddress);
     }
 
@@ -128,14 +128,14 @@ namespace Megastonks.Services
             }
         }
 
-        public SuccessResponse IsUserNameAvailable(string userName)
+        public EmptyResponse IsUserNameAvailable(string userName)
         {
             if (userName != null && isUserNameValid(userName))
             {
                 var account = _context.Accounts.SingleOrDefault(x => x.UserName == userName.Trim());
                 if (account == null)
                 {
-                    return new SuccessResponse();
+                    return new EmptyResponse();
                 }
 
                 throw new AppException("Username unavailable");
@@ -150,7 +150,11 @@ namespace Megastonks.Services
         {
             if (walletAddress != null && EthereumSigner.IsAddressValid(walletAddress))
             {
-                return new SuccessResponse();
+                var account = _context.Accounts.SingleOrDefault(x => x.WalletAddress == walletAddress);
+                return new SuccessResponse
+                {
+                    Success = account != null
+                };
             }
             else
             {

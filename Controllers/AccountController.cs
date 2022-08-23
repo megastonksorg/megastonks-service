@@ -39,7 +39,7 @@ namespace Megastonks.Controllers
         }
 
         [HttpPost("isUserNameAvailable")]
-        public ActionResult<SuccessResponse> IsUserNameAvailable(string userName)
+        public ActionResult<EmptyResponse> IsUserNameAvailable(string userName)
         {
             var response = _accountService.IsUserNameAvailable(userName);
             return Ok(response);
