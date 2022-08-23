@@ -45,6 +45,13 @@ namespace Megastonks.Controllers
             return Ok(response);
         }
 
+        [HttpPost("doesAccountExist")]
+        public ActionResult<SuccessResponse> DoesAccountExist(string walletAddress)
+        {
+            var response = _accountService.DoesAccountExist(walletAddress);
+            return Ok(response);
+        }
+
         private void setTokenCookie(string token)
         {
             var cookieOptions = new CookieOptions

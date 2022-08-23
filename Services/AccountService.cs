@@ -18,6 +18,7 @@ namespace Megastonks.Services
 		AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress);
         RegisterResponse Register(RegisterRequest model);
         SuccessResponse IsUserNameAvailable(string userName);
+        SuccessResponse DoesAccountExist(string walletAddress);
     }
 
 	public class AccountService : IAccountService
@@ -145,6 +146,17 @@ namespace Megastonks.Services
             }
         }
 
+        public SuccessResponse DoesAccountExist(string walletAddress)
+        {
+            if (walletAddress != null && EthereumSigner.IsAddressValid(walletAddress))
+            {
+                return new SuccessResponse();
+            }
+            else
+            {
+                throw new AppException("Invalid Address");
+            }
+        }
 
         private string generateJwtToken(Account account)
         {
