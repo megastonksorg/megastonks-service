@@ -17,7 +17,6 @@ namespace Megastonks.Services
         string RequestAuthentication();
 		AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress);
         RegisterResponse Register(RegisterRequest model);
-        EmptyResponse IsUserNameAvailable(string userName);
         SuccessResponse DoesAccountExist(string walletAddress);
     }
 
@@ -61,7 +60,6 @@ namespace Megastonks.Services
                     }
 
                     // map model to new account object
-                    model.UserName = model.UserName.Trim();
                     var account = _mapper.Map<Account>(model);
 
                     // first registered account is an admin
@@ -128,24 +126,6 @@ namespace Megastonks.Services
             }
         }
 
-        public EmptyResponse IsUserNameAvailable(string userName)
-        {
-            if (userName != null && isUserNameValid(userName))
-            {
-                var account = _context.Accounts.SingleOrDefault(x => x.UserName == userName.Trim());
-                if (account == null)
-                {
-                    return new EmptyResponse();
-                }
-
-                throw new AppException("Username unavailable");
-            }
-            else
-            {
-                throw new AppException("Username is not valid or null");
-            }
-        }
-
         public SuccessResponse DoesAccountExist(string walletAddress)
         {
             if (walletAddress != null && EthereumSigner.IsAddressValid(walletAddress))
@@ -161,7 +141,7 @@ namespace Megastonks.Services
                 throw new AppException("Invalid Address");
             }
         }
-
+        
         private string generateJwtToken(Account account)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -206,10 +186,7 @@ namespace Megastonks.Services
 
         private bool isRegisterModelValid(RegisterRequest model)
         {
-            return
-                EthereumSigner.IsAddressValid(model.WalletAddress) &&
-                !string.IsNullOrEmpty(model.FullName) &&
-                isUserNameValid(model.UserName);
+            return EthereumSigner.IsAddressValid(model.WalletAddress) && !string.IsNullOrEmpty(model.FullName);
         }
 
         private bool isUserNameValid(string userName)

@@ -38,13 +38,6 @@ namespace Megastonks.Controllers
             return Ok(response);
         }
 
-        [HttpPost("isUserNameAvailable")]
-        public ActionResult<EmptyResponse> IsUserNameAvailable(string userName)
-        {
-            var response = _accountService.IsUserNameAvailable(userName);
-            return Ok(response);
-        }
-
         [HttpPost("doesAccountExist")]
         public ActionResult<SuccessResponse> DoesAccountExist(string walletAddress)
         {
