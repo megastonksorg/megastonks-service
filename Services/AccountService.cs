@@ -188,11 +188,5 @@ namespace Megastonks.Services
         {
             return EthereumSigner.IsAddressValid(model.WalletAddress) && !string.IsNullOrEmpty(model.FullName);
         }
-
-        private bool isUserNameValid(string userName)
-        {
-            string userNameTrimmed = userName.Trim();
-            return !string.IsNullOrEmpty(userNameTrimmed) && userNameTrimmed.Length > 2;
-        }
     }
 }
