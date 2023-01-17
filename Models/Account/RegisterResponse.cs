@@ -7,7 +7,6 @@ namespace Megastonks.Models.Account
     {
         public string WalletAddress { get; set; }
         public string FullName { get; set; }
-        public string UserName { get; set; }
         public Uri ProfilePhoto { get; set; }
         public string Currency { get; set; }
 

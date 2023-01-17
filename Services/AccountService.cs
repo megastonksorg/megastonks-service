@@ -56,7 +56,8 @@ namespace Megastonks.Services
                     }
                     if (_context.Accounts.Any(x => x.WalletAddress == model.WalletAddress))
                     {
-                        throw new AppException(message: "User Exists: Please login");
+                        _logger.LogError($"Error Code: {ErrorCodes.Thanos}");
+                        throw new AppException( "Oops something went wrong");
                     }
 
                     // map model to new account object
@@ -186,7 +187,15 @@ namespace Megastonks.Services
 
         private bool isRegisterModelValid(RegisterRequest model)
         {
-            return EthereumSigner.IsAddressValid(model.WalletAddress) && !string.IsNullOrEmpty(model.FullName);
+            return EthereumSigner.IsAddressValid(model.WalletAddress) && !string.IsNullOrEmpty(model.FullName)
+                && isValidUrl(model.ProfilePhoto.OriginalString);
+        }
+
+        private static bool isValidUrl(string url)
+        {
+            Uri? uriResult;
+            return Uri.TryCreate(url, UriKind.Absolute, out uriResult) &&
+                    (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
         }
     }
 }
