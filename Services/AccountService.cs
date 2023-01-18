@@ -123,6 +123,7 @@ namespace Megastonks.Services
             }
             catch(Exception e)
             {
+                _logger.LogError(e.Message);
                 throw new AppException(e.Message);
             }
         }
@@ -164,7 +165,9 @@ namespace Megastonks.Services
                 Token = randomTokenString(),
                 Expires = DateTime.UtcNow.AddDays(10),
                 Created = DateTime.UtcNow,
-                CreatedByIp = ipAddress
+                CreatedByIp = ipAddress,
+                RevokedByIp = "",
+                ReplacedByToken = ""
             };
         }
 
