@@ -44,6 +44,7 @@
     <None Remove="AutoMapper.Extensions.Microsoft.DependencyInjection" />
     <None Remove="Azure.Storage.Blobs" />
     <None Remove="Microsoft.ApplicationInsights.AspNetCore" />
+    <None Remove="Models\Tribe\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Middleware\" />
@@ -52,5 +53,6 @@
     <Folder Include="Services\" />
     <Folder Include="Models\" />
     <Folder Include="Models\Account\" />
+    <Folder Include="Models\Tribe\" />
   </ItemGroup>
 </Project>
