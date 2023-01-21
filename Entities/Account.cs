@@ -14,6 +14,7 @@
         public DateTime? Verified { get; set; }
         public DateTime Created { get; set; }
         public DateTime? Updated { get; set; }
+        public DateTime? Deleted { get; set; }
         public List<RefreshToken> RefreshTokens { get; set; }
 
         public bool OwnsToken(string token)
