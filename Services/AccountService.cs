@@ -12,16 +12,16 @@ using Megastonks.Models;
 
 namespace Megastonks.Services
 {
-	public interface IAccountService
+    public interface IAccountService
     {
         string RequestAuthentication();
-		AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress);
+        AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress);
         RegisterResponse Register(RegisterRequest model);
         SuccessResponse DoesAccountExist(string walletAddress);
     }
 
-	public class AccountService : IAccountService
-	{
+    public class AccountService : IAccountService
+    {
         private readonly ILogger<AccountService> _logger;
         private readonly DataContext _context;
         private readonly IMapper _mapper;
@@ -48,8 +48,8 @@ namespace Megastonks.Services
         {
             try
             {
-               if (isRegisterModelValid(model))
-               {
+                if (isRegisterModelValid(model))
+                {
                     if (!model.AcceptTerms)
                     {
                         throw new AppException(message: "User must accept terms to register");
@@ -57,7 +57,7 @@ namespace Megastonks.Services
                     if (_context.Accounts.Any(x => x.WalletAddress == model.WalletAddress))
                     {
                         _logger.LogError($"Error Code: {ErrorCodes.Thanos}");
-                        throw new AppException( "Oops something went wrong");
+                        throw new AppException("Oops something went wrong");
                     }
 
                     // map model to new account object
@@ -75,10 +75,10 @@ namespace Megastonks.Services
 
                     return _mapper.Map<RegisterResponse>(_context.Accounts.FirstOrDefault(x => x.WalletAddress == account.WalletAddress));
                 }
-               else
-               {
+                else
+                {
                     throw new AppException(message: "Invalid User Data: Please ensure the wallet address is a valid ethereum address and the names are not empty");
-               }
+                }
             }
             catch (Exception e)
             {
@@ -121,7 +121,7 @@ namespace Megastonks.Services
                     throw new AppException("Invalid Signature");
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 _logger.LogError(e.Message);
                 throw new AppException(e.Message);
@@ -143,7 +143,7 @@ namespace Megastonks.Services
                 throw new AppException("Invalid Address");
             }
         }
-        
+
         private string generateJwtToken(Account account)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
