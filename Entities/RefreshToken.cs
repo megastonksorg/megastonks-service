@@ -4,8 +4,8 @@ using System.ComponentModel.DataAnnotations;
 namespace Megastonks.Entities
 {
     [Owned]
-	public class RefreshToken
-	{
+    public class RefreshToken
+    {
         [Key]
         public int Id { get; set; }
         public Account Account { get; set; }
@@ -20,4 +20,3 @@ namespace Megastonks.Entities
         public bool IsActive => Revoked == null && !IsExpired;
     }
 }
-
