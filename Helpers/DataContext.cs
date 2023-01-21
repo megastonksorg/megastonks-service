@@ -6,6 +6,8 @@ namespace Megastonks.Helpers
     public class DataContext : DbContext
     {
         public DbSet<Account> Accounts { get; set; }
+        public DbSet<Tribe> Tribes { get; set; }
+        public DbSet<TribeInviteCode> TribeInviteCodes { get; set; }
 
         private readonly IConfiguration Configuration;
 
