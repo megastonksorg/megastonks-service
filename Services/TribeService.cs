@@ -12,11 +12,11 @@ namespace Megastonks.Services
 
     public class TribeService : ITribeService
     {
-        private readonly ILogger<AccountService> _logger;
+        private readonly ILogger<TribeService> _logger;
         private readonly DataContext _context;
         private readonly IMapper _mapper;
 
-        public TribeService(ILogger<AccountService> logger, DataContext context, IMapper mapper)
+        public TribeService(ILogger<TribeService> logger, DataContext context, IMapper mapper)
         {
             _logger = logger;
             _context = context;
