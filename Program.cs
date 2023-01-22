@@ -2,6 +2,14 @@
 using Megastonks.Middleware;
 using Megastonks.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.Extensions.Options;
+using Microsoft.Identity.Client;
+using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
+using Megastonks.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +32,35 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IMediaUploadService, MediaUploadService>();
 builder.Services.AddScoped<ITribeService, TribeService>();
 
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        if (options.Events == null)
+            options.Events = new();
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["AppSettings:Secret"])),
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateIssuerSigningKey = true,
+            ClockSkew = TimeSpan.Zero,
+            ValidateActor = false
+        };
+
+        options.Events.OnTokenValidated = async context =>
+        {
+            var token = context.SecurityToken;
+            var jwtToken = (JwtSecurityToken)token;
+            var accountId = int.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
+            var dbContext = context.HttpContext.RequestServices.GetService<DataContext>();
+            context.HttpContext.Items["Account"] = await dbContext.Accounts.FindAsync(accountId);
+            Account account = context.HttpContext.Items["Account"] as Account;
+        };
+    });
+
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -40,6 +77,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseRouting();
 app.UseAuthorization();
 
@@ -49,12 +87,8 @@ app.UseCors(x => x
    .AllowAnyHeader()
    .AllowCredentials());
 
-app.UseAuthorization();
-
 app.UseMiddleware<ErrorHandlerMiddleware>();
-app.UseMiddleware<JwtMiddleware>();
 
 app.MapControllers();
 
 app.Run();
-

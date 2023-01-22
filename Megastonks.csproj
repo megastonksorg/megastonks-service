@@ -24,6 +24,7 @@
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.14.1" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.13" />
   </ItemGroup>
 
   <ItemGroup>
@@ -45,6 +46,7 @@
     <None Remove="Azure.Storage.Blobs" />
     <None Remove="Microsoft.ApplicationInsights.AspNetCore" />
     <None Remove="Models\Tribe\" />
+    <None Remove="Microsoft.AspNetCore.Authentication.JwtBearer" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Middleware\" />
