@@ -27,6 +27,7 @@ namespace Megastonks.Services
         {
             try
             {
+                int tribeLimit = 5;
                 if (name == null || name.Trim().Length == 0)
                 {
                     throw new AppException("Tribe name cannot be empty or null");
@@ -35,6 +36,13 @@ namespace Megastonks.Services
                 if (name.Length > 24)
                 {
                     throw new AppException("Tribe name is too long. Must be 24 characters or less.");
+                }
+
+                var currentTribes = _context.Tribes.Where(x => x.TribeMembers.Any(y => y.Account == account));
+
+                if (currentTribes.Count() >= tribeLimit)
+                {
+                    throw new AppException($"You are only allowed {tribeLimit} tribes.");
                 }
 
                 var tribeToAdd = new Tribe {
