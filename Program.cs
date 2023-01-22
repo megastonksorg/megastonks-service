@@ -45,7 +45,6 @@ builder.Services
             ValidateAudience = false,
             ValidateIssuerSigningKey = true,
             ClockSkew = TimeSpan.Zero,
-            ValidateActor = false
         };
 
         options.Events.OnTokenValidated = async context =>
