@@ -10,9 +10,9 @@ namespace Megastonks.Controllers
 	[Route("[controller]")]
 	public class TribeController : BaseController
 	{
-        private readonly TribeService _tribeService;
+        private readonly ITribeService _tribeService;
 
-        public TribeController(TribeService tribeService)
+        public TribeController(ITribeService tribeService)
 		{
 			_tribeService = tribeService;
 		}
