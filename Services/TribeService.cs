@@ -27,6 +27,11 @@ namespace Megastonks.Services
         {
             try
             {
+                if (name == null || name.Trim().Length == 0)
+                {
+                    throw new AppException("Tribe name cannot be empty or null");
+                }
+
                 if (name.Length > 24)
                 {
                     throw new AppException("Tribe name is too long. Must be 24 characters or less.");
