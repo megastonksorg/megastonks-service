@@ -24,5 +24,12 @@ namespace Megastonks.Controllers
             var result = _tribeService.CreateTribe(Account, name);
             return Ok(result);
         }
+
+        [HttpPost("leave")]
+        public ActionResult<TribeResponse> LeaveTribe(string id)
+        {
+            var result = _tribeService.LeaveTribe(Account, id);
+            return Ok(result);
+        }
     }
 }
