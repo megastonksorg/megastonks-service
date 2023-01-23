@@ -101,7 +101,7 @@ namespace Megastonks.Services
                     throw new AppException("Null Tribe Id");
                 }
 
-                var tribeToLeave = _context.Tribes.Find(tribeId);
+                var tribeToLeave = _context.Tribes.Find(Guid.Parse(tribeId));
                 if (tribeToLeave != null)
                 {
                     var member = tribeToLeave.TribeMembers.Where(x => x.Account == account).FirstOrDefault();
