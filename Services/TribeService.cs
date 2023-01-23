@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Megastonks.Entities;
 using Megastonks.Helpers;
+using Megastonks.Models;
 using Megastonks.Models.Tribe;
 
 namespace Megastonks.Services
@@ -8,6 +9,7 @@ namespace Megastonks.Services
     public interface ITribeService
     {
         TribeResponse CreateTribe(Account account, string name);
+        SuccessResponse LeaveTribe(Account account, string tribeId);
     }
 
     public class TribeService : ITribeService
@@ -35,14 +37,14 @@ namespace Megastonks.Services
 
                 if (name.Length > 24)
                 {
-                    throw new AppException("Tribe name is too long. Must be 24 characters or less.");
+                    throw new AppException("Tribe name is too long. Must be 24 characters or less");
                 }
 
                 var currentTribes = _context.Tribes.Where(x => x.TribeMembers.Any(y => y.Account == account));
 
                 if (currentTribes.Count() >= tribeLimit)
                 {
-                    throw new AppException($"You are only allowed {tribeLimit} tribes.");
+                    throw new AppException($"You are only allowed {tribeLimit} tribes");
                 }
 
                 var tribeToAdd = new Tribe {
@@ -82,6 +84,46 @@ namespace Megastonks.Services
                     Name = tribe.Name,
                     Members = membersResponse
                 };
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                throw new AppException(e.Message);
+            }
+        }
+
+        public SuccessResponse LeaveTribe(Account account, string tribeId)
+        {
+            try
+            {
+                if (tribeId == null)
+                {
+                    throw new AppException("Null Tribe Id");
+                }
+
+                var tribeToLeave = _context.Tribes.Find(tribeId);
+                if (tribeToLeave != null)
+                {
+                    var member = tribeToLeave.TribeMembers.Where(x => x.Account == account).FirstOrDefault();
+                    if (member == null)
+                    {
+                        throw new AppException("Cannot leave a tribe you are not a member of");
+                    }
+
+                    tribeToLeave.TribeMembers.Remove(member);
+
+                    _context.Update(tribeToLeave);
+                    _context.SaveChanges();
+
+                    return new SuccessResponse
+                    {
+                        Success = true
+                    };
+                }
+                else
+                {
+                    throw new AppException("Could not find tribe");
+                }
             }
             catch (Exception e)
             {
