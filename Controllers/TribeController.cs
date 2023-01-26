@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Megastonks.Models.Tribe;
 using Megastonks.Services;
 using Megastonks.Entities;
+using Megastonks.Models;
 
 namespace Megastonks.Controllers
 {
@@ -26,7 +27,7 @@ namespace Megastonks.Controllers
         }
 
         [HttpPost("leave")]
-        public ActionResult<TribeResponse> LeaveTribe(string id)
+        public ActionResult<SuccessResponse> LeaveTribe(string id)
         {
             var result = _tribeService.LeaveTribe(Account, id);
             return Ok(result);
