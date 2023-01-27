@@ -26,6 +26,13 @@ namespace Megastonks.Controllers
             return Ok(result);
         }
 
+        [HttpPost("invite")]
+        public ActionResult<SuccessResponse> InviteToTribe(string tribeId, string code)
+        {
+            var result = _tribeService.InviteToTribe(Account, tribeId, code);
+            return Ok(result);
+        }
+
         [HttpPost("leave")]
         public ActionResult<SuccessResponse> LeaveTribe(string id)
         {

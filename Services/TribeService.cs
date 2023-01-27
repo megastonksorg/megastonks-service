@@ -9,6 +9,7 @@ namespace Megastonks.Services
     public interface ITribeService
     {
         TribeResponse CreateTribe(Account account, string name);
+        SuccessResponse InviteToTribe(Account account, string tribeId, string code);
         SuccessResponse LeaveTribe(Account account, string tribeId);
     }
 
