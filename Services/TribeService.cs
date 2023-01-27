@@ -92,6 +92,52 @@ namespace Megastonks.Services
             }
         }
 
+        public SuccessResponse InviteToTribe(Account account, string tribeId, string code)
+        {
+            try
+            {
+                if (tribeId == null || code == null)
+                {
+                    throw new AppException("Invalid tribe ID or code");
+                }
+
+                Tribe tribe = _context.Tribes.Find(Guid.Parse(tribeId));
+
+                if (tribe == null)
+                {
+                    throw new AppException("Invalid Tribe");
+                }
+
+                if (!tribe.TribeMembers.Where(x => x.Account == account).Any())
+                {
+                    throw new AppException("You cannot send invites for a tribe you are not a member of");
+                }
+
+                TribeInviteCode inviteCode = new TribeInviteCode
+                {
+                    Code = code,
+                    Account = account,
+                    Tribe = tribe,
+                    Created = DateTime.UtcNow,
+                    Expires = DateTime.UtcNow.AddMinutes(6)
+                };
+
+                _context.TribeInviteCodes.Add(inviteCode);
+                _context.SaveChanges();
+
+                return new SuccessResponse
+                {
+                    Success = true
+                };
+
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                throw new AppException(e.Message);
+            }
+        }
+
         public SuccessResponse LeaveTribe(Account account, string tribeId)
         {
             try
