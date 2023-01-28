@@ -98,7 +98,7 @@ namespace Megastonks.Services
         {
             try
             {
-                if (tribeId == null || code == null)
+                if (string.IsNullOrEmpty(tribeId) || string.IsNullOrEmpty(code))
                 {
                     throw new AppException("Invalid tribe ID or code");
                 }
