@@ -10,6 +10,7 @@ namespace Megastonks.Services
     {
         TribeResponse CreateTribe(Account account, string name);
         SuccessResponse InviteToTribe(Account account, string tribeId, string code);
+        TribeResponse JoinTribe(Account account, string pin, string code);
         SuccessResponse LeaveTribe(Account account, string tribeId);
     }
 
@@ -133,6 +134,22 @@ namespace Megastonks.Services
 
             }
             catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                throw new AppException(e.Message);
+            }
+        }
+
+        public TribeResponse JoinTribe(Account account, string pin, string code)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(pin) || string.IsNullOrEmpty(code))
+                {
+                    throw new AppException("Invalid pin or code");
+                }
+            }
+            catch(Exception e)
             {
                 _logger.LogError(e.Message);
                 throw new AppException(e.Message);
