@@ -68,23 +68,13 @@ namespace Megastonks.Services
                 _context.Update(tribe);
                 _context.SaveChanges();
 
-                var membersResponse = new List<TribeResponse.Member>();
-                foreach (var member in tribe.TribeMembers) {
-                    membersResponse.Add(
-                        new TribeResponse.Member
-                        {
-                            Id = member.Account.Id,
-                            FullName = member.Account.FullName,
-                            ProfilePhoto = member.Account.ProfilePhoto
-                        }
-                    );
-                }
+                var tribeMembers = mapTribeMembersForResponse(tribe.TribeMembers);
 
                 return new TribeResponse
                 {
                     Id = tribe.Id.ToString(),
                     Name = tribe.Name,
-                    Members = membersResponse
+                    Members = tribeMembers
                 };
             }
             catch (Exception e)
@@ -148,6 +138,41 @@ namespace Megastonks.Services
                 {
                     throw new AppException("Invalid pin or code");
                 }
+
+                string incomingInviteCodeHashed = EthereumSigner.HashMessage($"{pin}:{code}");
+                TribeInviteCode tribeInviteCode = _context.TribeInviteCodes.Where(x => x.Code == incomingInviteCodeHashed).FirstOrDefault();
+
+                if (tribeInviteCode == null)
+                {
+                    throw new AppException("Invalid Invite Code. Please try again.");
+                }
+
+                Tribe tribe = _context.Tribes.Find(tribeInviteCode.Tribe);
+
+                if (tribe == null)
+                {
+                    throw new AppException("Something went wrong! Invalid Tribe");
+                }
+
+                TribeMember tribeMember = new TribeMember
+                {
+                    Tribe = tribe,
+                    Account = account
+                };
+
+                tribe.TribeMembers.Add(tribeMember);
+
+                _context.Tribes.Update(tribe);
+                _context.SaveChanges();
+
+                var tribeMembers = mapTribeMembersForResponse(tribe.TribeMembers);
+
+                return new TribeResponse
+                {
+                    Id = tribe.Id.ToString(),
+                    Name = tribe.Name,
+                    Members = tribeMembers
+                };
             }
             catch(Exception e)
             {
@@ -194,6 +219,23 @@ namespace Megastonks.Services
                 _logger.LogError(e.Message);
                 throw new AppException(e.Message);
             }
+        }
+
+        private List<TribeResponse.Member> mapTribeMembersForResponse(List<TribeMember> tribeMembers)
+        {
+            var membersResponse = new List<TribeResponse.Member>();
+            foreach (var member in tribeMembers)
+            {
+                membersResponse.Add(
+                    new TribeResponse.Member
+                    {
+                        Id = member.Account.Id,
+                        FullName = member.Account.FullName,
+                        ProfilePhoto = member.Account.ProfilePhoto
+                    }
+                );
+            }
+            return membersResponse;
         }
     }
 }
