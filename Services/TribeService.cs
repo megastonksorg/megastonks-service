@@ -144,7 +144,7 @@ namespace Megastonks.Services
 
                 if (tribeInviteCode == null)
                 {
-                    throw new AppException("Invalid Invite Code. Please try again.");
+                    throw new AppException("Invalid Invite Code. Please try again");
                 }
 
                 Tribe tribe = _context.Tribes.Find(tribeInviteCode.Tribe);
@@ -152,6 +152,11 @@ namespace Megastonks.Services
                 if (tribe == null)
                 {
                     throw new AppException("Something went wrong! Invalid Tribe");
+                }
+
+                if (tribe.TribeMembers.Where(x => x.Account == account).Any())
+                {
+                    throw new AppException("Cannot join tribe you are already a member of");
                 }
 
                 TribeMember tribeMember = new TribeMember
