@@ -94,6 +94,11 @@ namespace Megastonks.Services
                     throw new AppException("Invalid tribe ID or code");
                 }
 
+                if (_context.TribeInviteCodes.Where(x => x.Code == code).Any())
+                {
+                    throw new AppException("Error creating your invite code. Please try that again");
+                }
+
                 Tribe tribe = _context.Tribes.Find(Guid.Parse(tribeId));
 
                 if (tribe == null)
