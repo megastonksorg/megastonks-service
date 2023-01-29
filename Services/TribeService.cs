@@ -3,6 +3,7 @@ using Megastonks.Entities;
 using Megastonks.Helpers;
 using Megastonks.Models;
 using Megastonks.Models.Tribe;
+using Microsoft.EntityFrameworkCore;
 
 namespace Megastonks.Services
 {
@@ -140,14 +141,17 @@ namespace Megastonks.Services
                 }
 
                 string incomingInviteCodeHashed = EthereumSigner.HashMessage($"{pin}:{code}");
-                TribeInviteCode tribeInviteCode = _context.TribeInviteCodes.Where(x => x.Code == incomingInviteCodeHashed).FirstOrDefault();
+                TribeInviteCode tribeInviteCode = _context.TribeInviteCodes
+                    .Where(x => x.Code == incomingInviteCodeHashed)
+                    .Include(x => x.Tribe)
+                    .FirstOrDefault();
 
                 if (tribeInviteCode == null)
                 {
                     throw new AppException("Invalid Invite Code. Please try again");
                 }
 
-                Tribe tribe = _context.Tribes.Find(tribeInviteCode.Tribe);
+                Tribe tribe = _context.Tribes.Find(tribeInviteCode.Tribe.Id);
 
                 if (tribe == null)
                 {
@@ -156,7 +160,7 @@ namespace Megastonks.Services
 
                 if (tribe.TribeMembers.Where(x => x.Account == account).Any())
                 {
-                    throw new AppException("Cannot join tribe you are already a member of");
+                    throw new AppException("Cannot join a tribe you are already a member of");
                 }
 
                 TribeMember tribeMember = new TribeMember
