@@ -278,9 +278,9 @@ namespace Megastonks.Services
                 membersResponse.Add(
                     new TribeResponse.Member
                     {
-                        Id = member.Account.Id,
                         FullName = member.Account.FullName,
-                        ProfilePhoto = member.Account.ProfilePhoto
+                        ProfilePhoto = member.Account.ProfilePhoto,
+                        WalletAddress = member.Account.WalletAddress
                     }
                 );
             }
