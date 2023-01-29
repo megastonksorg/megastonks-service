@@ -153,6 +153,8 @@ namespace Megastonks.Services
 
                 if (tribeInviteCode.Expires < DateTime.UtcNow)
                 {
+                    _context.TribeInviteCodes.Remove(tribeInviteCode);
+                    _context.SaveChanges();
                     throw new AppException("Pin Code has expired. Please ask your potential tribe member for a new one");
                 }
 
@@ -176,6 +178,7 @@ namespace Megastonks.Services
 
                 tribe.TribeMembers.Add(tribeMember);
 
+                _context.TribeInviteCodes.Remove(tribeInviteCode);
                 _context.Tribes.Update(tribe);
                 _context.SaveChanges();
 
