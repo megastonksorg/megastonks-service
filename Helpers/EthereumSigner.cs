@@ -49,5 +49,11 @@ namespace Megastonks.Helpers
                 addressUtil.IsValidEthereumAddressHexFormat(address) &&
                 addressUtil.IsChecksumAddress(address);
         }
+
+        public static string HashMessage(string message)
+        {
+            var sha3Keccak = new Sha3Keccack();
+            return sha3Keccak.CalculateHash(message);
+        }
     }
 }
