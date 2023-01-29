@@ -33,6 +33,13 @@ namespace Megastonks.Controllers
             return Ok(result);
         }
 
+        [HttpPost("join")]
+        public ActionResult<TribeResponse> JoinTribe(string pin, string code)
+        {
+            var result = _tribeService.JoinTribe(Account, pin, code);
+            return Ok(result);
+        }
+
         [HttpPost("leave")]
         public ActionResult<SuccessResponse> LeaveTribe(string id)
         {
