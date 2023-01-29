@@ -19,6 +19,13 @@ namespace Megastonks.Controllers
             _tribeService = tribeService;
         }
 
+        [HttpGet]
+        public ActionResult<List<TribeResponse>> Get()
+        {
+            var result = _tribeService.GetTribes(Account);
+            return Ok(result);
+        }
+
         [HttpPost("create")]
         public ActionResult<TribeResponse> CreateTribe(string name)
         {
