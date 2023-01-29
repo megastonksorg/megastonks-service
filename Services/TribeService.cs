@@ -10,6 +10,7 @@ namespace Megastonks.Services
     public interface ITribeService
     {
         TribeResponse CreateTribe(Account account, string name);
+        List<TribeResponse> GetTribes(Account account);
         SuccessResponse InviteToTribe(Account account, string tribeId, string code);
         TribeResponse JoinTribe(Account account, string pin, string code);
         SuccessResponse LeaveTribe(Account account, string tribeId);
@@ -79,6 +80,32 @@ namespace Megastonks.Services
                 };
             }
             catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                throw new AppException(e.Message);
+            }
+        }
+
+        public List<TribeResponse> GetTribes(Account account)
+        {
+            try
+            {
+                List<TribeResponse> tribesResponse = new List<TribeResponse>();
+                var tribes = _context.Tribes.Where(x => x.TribeMembers.Any(y => y.Account == account)).ToList();
+                foreach(var tribe in tribes)
+                {
+                    tribesResponse.Add(
+                        new TribeResponse
+                        {
+                            Id = tribe.Id.ToString(),
+                            Name = tribe.Name,
+                            Members = mapTribeMembersForResponse(tribe.TribeMembers)
+                        }
+                    );
+                }
+                return tribesResponse;
+            }
+            catch(Exception e)
             {
                 _logger.LogError(e.Message);
                 throw new AppException(e.Message);
