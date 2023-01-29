@@ -151,6 +151,11 @@ namespace Megastonks.Services
                     throw new AppException("Invalid Invite Code. Please try again");
                 }
 
+                if (tribeInviteCode.Expires < DateTime.UtcNow)
+                {
+                    throw new AppException("Pin Code has expired. Please ask your potential tribe member for a new one");
+                }
+
                 Tribe tribe = _context.Tribes.Find(tribeInviteCode.Tribe.Id);
 
                 if (tribe == null)
