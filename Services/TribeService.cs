@@ -44,9 +44,9 @@ namespace Megastonks.Services
                     throw new AppException("Tribe name is too long. Must be 24 characters or less");
                 }
 
-                var currentTribes = _context.Tribes.Where(x => x.TribeMembers.Any(y => y.Account == account));
+                int tribesCount = _context.Tribes.Where(x => x.TribeMembers.Any(y => y.Account == account)).Count();
 
-                if (currentTribes.Count() >= tribeLimit)
+                if (tribesCount >= tribeLimit)
                 {
                     throw new AppException($"You are only allowed {tribeLimit} tribes");
                 }
