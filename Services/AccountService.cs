@@ -14,6 +14,7 @@ namespace Megastonks.Services
 {
     public interface IAccountService
     {
+        AuthenticateResponse RefreshToken(string token, string ipAddress);
         string RequestAuthentication();
         AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress);
         RegisterResponse Register(RegisterRequest model);
@@ -37,6 +38,32 @@ namespace Megastonks.Services
             _context = context;
             _mapper = mapper;
             _appSettings = appSettings.Value;
+        }
+
+        public AuthenticateResponse RefreshToken(string token, string ipAddress)
+        {
+            var (refreshToken, account) = getRefreshToken(token);
+
+            // replace old refresh token with a new one and save
+            var newRefreshToken = generateRefreshToken(ipAddress);
+            refreshToken.Revoked = DateTime.UtcNow;
+            refreshToken.RevokedByIp = ipAddress;
+            refreshToken.ReplacedByToken = newRefreshToken.Token;
+
+            removeOldRefreshTokens(account);
+
+            account.RefreshTokens.Add(newRefreshToken);
+
+            _context.Update(account);
+            _context.SaveChanges();
+
+            // generate new jwt
+            var jwtToken = generateJwtToken(account);
+
+            var response = _mapper.Map<AuthenticateResponse>(account);
+            response.JwtToken = jwtToken;
+            response.RefreshToken = newRefreshToken.Token;
+            return response;
         }
 
         public string RequestAuthentication()
@@ -172,6 +199,15 @@ namespace Megastonks.Services
                 RevokedByIp = "",
                 ReplacedByToken = ""
             };
+        }
+
+        private (RefreshToken, Account) getRefreshToken(string token)
+        {
+            var account = _context.Accounts.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token));
+            if (account == null) throw new AppException("Invalid token");
+            var refreshToken = account.RefreshTokens.Single(x => x.Token == token);
+            if (!refreshToken.IsActive) throw new AppException("Invalid token");
+            return (refreshToken, account);
         }
 
         private string randomTokenString()

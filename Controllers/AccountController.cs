@@ -16,6 +16,15 @@ namespace Megastonks.Controllers
             _accountService = accountService;
         }
 
+        [HttpPost("refresh")]
+        public ActionResult<AuthenticateResponse> RefreshToken()
+        {
+            var refreshToken = Request.Cookies["refreshToken"];
+            var response = _accountService.RefreshToken(refreshToken, ipAddress());
+            setTokenCookie(response.RefreshToken);
+            return Ok(response);
+        }
+
         [HttpGet("requestAuthentication")]
         public ActionResult<string> RequestAuthentication()
         {
