@@ -147,6 +147,10 @@ namespace Megastonks.Services
                     Expires = DateTime.UtcNow.AddMinutes(6)
                 };
 
+                //Remove All expired invite codes
+                var expiredInviteCodes = _context.TribeInviteCodes.Where(x => x.Expires < DateTime.UtcNow).ToList();
+                _context.TribeInviteCodes.RemoveRange(expiredInviteCodes);
+
                 _context.TribeInviteCodes.Add(inviteCode);
                 _context.SaveChanges();
 
