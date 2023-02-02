@@ -19,6 +19,7 @@ namespace Megastonks.Services
     public class TribeService : ITribeService
     {
         private readonly int tribeLimit = 5;
+        private readonly int tribeMembersLimit = 10;
         private readonly ILogger<TribeService> _logger;
         private readonly DataContext _context;
         private readonly IMapper _mapper;
@@ -214,6 +215,11 @@ namespace Megastonks.Services
                 if (tribe == null)
                 {
                     throw new AppException("Something went wrong! Invalid Tribe");
+                }
+
+                if (tribe.TribeMembers.Count >= tribeMembersLimit)
+                {
+                    throw new AppException($"You cannot join this Tribe. It has {tribeMembersLimit} members already.");
                 }
 
                 if (tribe.TribeMembers.Where(x => x.Account == account).Any())
