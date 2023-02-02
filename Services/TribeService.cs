@@ -81,7 +81,7 @@ namespace Megastonks.Services
             }
             catch (Exception e)
             {
-                _logger.LogError(e.ToString());
+                _logger.LogError(e.StackTrace);
                 throw new AppException(e.Message);
             }
         }
@@ -91,7 +91,11 @@ namespace Megastonks.Services
             try
             {
                 List<TribeResponse> tribesResponse = new List<TribeResponse>();
-                var tribes = _context.Tribes.Where(x => x.TribeMembers.Any(y => y.Account == account)).ToList();
+                var tribes = _context.Tribes
+                    .Include(x => x.TribeMembers)
+                    .ThenInclude(y => y.Account)
+                    .Where(x => x.TribeMembers.Any(y => y.Account == account))
+                    .ToList();
                 foreach(var tribe in tribes)
                 {
                     tribesResponse.Add(
@@ -107,7 +111,7 @@ namespace Megastonks.Services
             }
             catch(Exception e)
             {
-                _logger.LogError(e.ToString());
+                _logger.LogError(e.StackTrace);
                 throw new AppException(e.Message);
             }
         }
@@ -162,7 +166,7 @@ namespace Megastonks.Services
             }
             catch (Exception e)
             {
-                _logger.LogError(e.ToString());
+                _logger.LogError(e.StackTrace);
                 throw new AppException(e.Message);
             }
         }
@@ -201,7 +205,11 @@ namespace Megastonks.Services
                     throw new AppException("Pin Code has expired. Please ask the sender for a new one");
                 }
 
-                Tribe tribe = _context.Tribes.Find(tribeInviteCode.Tribe.Id);
+                Tribe tribe = _context.Tribes
+                    .Include(x => x.TribeMembers)
+                    .ThenInclude(x => x.Account)
+                    .Where(x => x.Id == tribeInviteCode.Tribe.Id)
+                    .FirstOrDefault();
 
                 if (tribe == null)
                 {
@@ -236,7 +244,7 @@ namespace Megastonks.Services
             }
             catch(Exception e)
             {
-                _logger.LogError(e.ToString());
+                _logger.LogError(e.StackTrace);
                 throw new AppException(e.Message);
             }
         }
@@ -276,7 +284,7 @@ namespace Megastonks.Services
             }
             catch (Exception e)
             {
-                _logger.LogError(e.ToString());
+                _logger.LogError(e.StackTrace);
                 throw new AppException(e.Message);
             }
         }
