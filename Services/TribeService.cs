@@ -18,6 +18,7 @@ namespace Megastonks.Services
 
     public class TribeService : ITribeService
     {
+        private readonly int tribeLimit = 5;
         private readonly ILogger<TribeService> _logger;
         private readonly DataContext _context;
         private readonly IMapper _mapper;
@@ -33,7 +34,6 @@ namespace Megastonks.Services
         {
             try
             {
-                int tribeLimit = 5;
                 if (name == null || name.Trim().Length == 0)
                 {
                     throw new AppException("Tribe name cannot be empty or null");
@@ -48,7 +48,7 @@ namespace Megastonks.Services
 
                 if (tribesCount >= tribeLimit)
                 {
-                    throw new AppException($"You are only allowed {tribeLimit} tribes");
+                    throw new AppException($"You can only be a member of {tribeLimit} tribes. You have to leave one to create a new one");
                 }
 
                 var tribeToAdd = new Tribe {
@@ -185,6 +185,13 @@ namespace Megastonks.Services
                 if (tribeInviteCode == null)
                 {
                     throw new AppException("Invalid Invite Code. Please try again");
+                }
+
+                int tribesCount = _context.Tribes.Where(x => x.TribeMembers.Any(y => y.Account == account)).Count();
+
+                if (tribesCount >= tribeLimit)
+                {
+                    throw new AppException($"You can only be a member of {tribeLimit} tribes. You have to leave one to join a new one");
                 }
 
                 if (tribeInviteCode.Expires < DateTime.UtcNow)
