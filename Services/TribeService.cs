@@ -173,7 +173,7 @@ namespace Megastonks.Services
             {
                 if (string.IsNullOrEmpty(pin) || string.IsNullOrEmpty(code))
                 {
-                    throw new AppException("Invalid pin or code");
+                    throw new AppException("Invalid pin code");
                 }
 
                 string incomingInviteCodeHashed = EthereumSigner.HashMessage($"{pin}:{code}");
@@ -191,7 +191,7 @@ namespace Megastonks.Services
                 {
                     _context.TribeInviteCodes.Remove(tribeInviteCode);
                     _context.SaveChanges();
-                    throw new AppException("Pin Code has expired. Please ask your potential tribe member for a new one");
+                    throw new AppException("Pin Code has expired. Please ask the sender for a new one");
                 }
 
                 Tribe tribe = _context.Tribes.Find(tribeInviteCode.Tribe.Id);
