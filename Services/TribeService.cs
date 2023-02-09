@@ -53,7 +53,7 @@ namespace Megastonks.Services
                 }
 
                 var tribeToAdd = new Tribe {
-                    Name = name,
+                    Name = name.Trim(),
                     Created = DateTime.UtcNow
                 };
 
