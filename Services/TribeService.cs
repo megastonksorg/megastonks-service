@@ -14,12 +14,14 @@ namespace Megastonks.Services
         SuccessResponse InviteToTribe(Account account, string tribeId, string code);
         TribeResponse JoinTribe(Account account, string pin, string code);
         SuccessResponse LeaveTribe(Account account, string tribeId);
+        TribeResponse UpdateTribeName(Account account, string tribeId, string name);
     }
 
     public class TribeService : ITribeService
     {
         private readonly int tribeLimit = 5;
         private readonly int tribeMembersLimit = 10;
+        private readonly int tribeNameLimit = 24;
         private readonly ILogger<TribeService> _logger;
         private readonly DataContext _context;
         private readonly IMapper _mapper;
@@ -35,15 +37,7 @@ namespace Megastonks.Services
         {
             try
             {
-                if (name == null || name.Trim().Length == 0)
-                {
-                    throw new AppException("Tribe name cannot be empty or null");
-                }
-
-                if (name.Length > 24)
-                {
-                    throw new AppException("Tribe name is too long. Must be 24 characters or less");
-                }
+                string validatedName = validateTribeName(name);
 
                 int tribesCount = _context.Tribes.Where(x => x.TribeMembers.Any(y => y.Account == account)).Count();
 
@@ -53,7 +47,7 @@ namespace Megastonks.Services
                 }
 
                 var tribeToAdd = new Tribe {
-                    Name = name.Trim(),
+                    Name = validatedName,
                     Created = DateTime.UtcNow
                 };
 
@@ -295,6 +289,56 @@ namespace Megastonks.Services
             }
         }
 
+        public TribeResponse UpdateTribeName(Account account, string tribeId, string name)
+        {
+            try
+            {
+                if (tribeId == null)
+                {
+                    throw new AppException("Null Tribe Id");
+                }
+
+                string validatedName = validateTribeName(name);
+
+                var tribeToUpdate = _context.Tribes.Find(Guid.Parse(tribeId));
+                if (tribeToUpdate != null)
+                {
+                    var member = tribeToUpdate.TribeMembers.Where(x => x.Account == account).FirstOrDefault();
+                    if (member == null)
+                    {
+                        throw new AppException("Cannot update the name of a tribe you are not a member of");
+                    }
+
+                    tribeToUpdate.Name = validatedName;
+
+                    _context.Update(tribeToUpdate);
+                    _context.SaveChanges();
+
+                    Tribe tribe = _context.Tribes
+                        .Include(x => x.TribeMembers)
+                        .ThenInclude(x => x.Account)
+                        .Where(x => x.Id == tribeToUpdate.Id)
+                        .FirstOrDefault();
+
+                    return new TribeResponse
+                    {
+                       Id = tribe.Id.ToString(),
+                       Name = tribe.Name,
+                       Members = mapTribeMembersForResponse(tribe.TribeMembers)
+                    };
+                }
+                else
+                {
+                    throw new AppException("Could not find tribe");
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.StackTrace);
+                throw new AppException(e.Message);
+            }
+        }
+
         private List<TribeResponse.Member> mapTribeMembersForResponse(List<TribeMember> tribeMembers)
         {
             var membersResponse = new List<TribeResponse.Member>();
@@ -310,6 +354,21 @@ namespace Megastonks.Services
                 );
             }
             return membersResponse;
+        }
+
+        private string validateTribeName(string name)
+        {
+            if (name == null || name.Trim().Length == 0)
+            {
+                throw new AppException("Tribe name cannot be empty or null");
+            }
+
+            if (name.Length > tribeNameLimit)
+            {
+                throw new AppException("Tribe name is too long. Must be 24 characters or less");
+            }
+
+            return name.Trim();
         }
     }
 }
