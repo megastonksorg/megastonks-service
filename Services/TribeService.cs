@@ -14,7 +14,7 @@ namespace Megastonks.Services
         SuccessResponse InviteToTribe(Account account, string tribeId, string code);
         TribeResponse JoinTribe(Account account, string pin, string code);
         SuccessResponse LeaveTribe(Account account, string tribeId);
-        TribeResponse UpdateTribeName(Account account, string tribeId, string name);
+        string UpdateTribeName(Account account, string tribeId, string name);
     }
 
     public class TribeService : ITribeService
@@ -289,7 +289,7 @@ namespace Megastonks.Services
             }
         }
 
-        public TribeResponse UpdateTribeName(Account account, string tribeId, string name)
+        public string UpdateTribeName(Account account, string tribeId, string name)
         {
             try
             {
@@ -314,18 +314,7 @@ namespace Megastonks.Services
                     _context.Update(tribeToUpdate);
                     _context.SaveChanges();
 
-                    Tribe tribe = _context.Tribes
-                        .Include(x => x.TribeMembers)
-                        .ThenInclude(x => x.Account)
-                        .Where(x => x.Id == tribeToUpdate.Id)
-                        .FirstOrDefault();
-
-                    return new TribeResponse
-                    {
-                       Id = tribe.Id.ToString(),
-                       Name = tribe.Name,
-                       Members = mapTribeMembersForResponse(tribe.TribeMembers)
-                    };
+                    return validatedName;
                 }
                 else
                 {

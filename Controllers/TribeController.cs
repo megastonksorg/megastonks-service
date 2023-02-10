@@ -53,5 +53,12 @@ namespace Megastonks.Controllers
             var result = _tribeService.LeaveTribe(Account, id);
             return Ok(result);
         }
+
+        [HttpPatch("name")]
+        public ActionResult<string> UpdateTribeName(string id, string name)
+        {
+            var result = _tribeService.UpdateTribeName(Account, id, name);
+            return Ok(result);
+        }
     }
 }
