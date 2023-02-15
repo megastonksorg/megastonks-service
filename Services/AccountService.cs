@@ -96,7 +96,7 @@ namespace Megastonks.Services
                     account.Currency = "USD";
                     account.Role = isFirstAccount ? Role.Admin : Role.User;
                     account.Created = DateTime.UtcNow;
-
+                    account.FullName.Trim();
                     // save account
                     _context.Accounts.Add(account);
                     _context.SaveChanges();
@@ -191,7 +191,7 @@ namespace Megastonks.Services
                 }
                 if (!string.IsNullOrEmpty(fullName))
                 {
-                    user.FullName = fullName;
+                    user.FullName = fullName.Trim();
                     _context.Update(user);
                     _context.SaveChanges();
                     return fullName;
