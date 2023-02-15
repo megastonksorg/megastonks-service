@@ -19,6 +19,7 @@ namespace Megastonks.Services
         AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress);
         RegisterResponse Register(RegisterRequest model);
         SuccessResponse DoesAccountExist(string walletAddress);
+        string UpdateAccountName(Account account, string fullName);
     }
 
     public class AccountService : IAccountService
@@ -169,6 +170,22 @@ namespace Megastonks.Services
             {
                 throw new AppException("Invalid Address");
             }
+        }
+
+        public string UpdateAccountName(Account account, string fullName)
+        {
+            var user = _context.Accounts.SingleOrDefault(x => x == account);
+            if (user == null)
+            {
+                throw new AppException("Invalid User");
+            }
+            if (!string.IsNullOrEmpty(fullName)) {
+                user.FullName = fullName;
+                _context.Update(user);
+                _context.SaveChanges();
+                return fullName;
+            }
+            throw new AppException("Name cannot be null or empty");
         }
 
         private string generateJwtToken(Account account)

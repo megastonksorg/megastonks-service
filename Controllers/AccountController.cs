@@ -54,6 +54,13 @@ namespace Megastonks.Controllers
             return Ok(response);
         }
 
+        [HttpPost("updateName")]
+        public ActionResult<string> UpdateName(string fullName)
+        {
+            var response = _accountService.UpdateAccountName(Account, fullName);
+            return Ok(response);
+        }
+
         private void setTokenCookie(string token)
         {
             var cookieOptions = new CookieOptions
