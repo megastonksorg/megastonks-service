@@ -3,6 +3,7 @@
     public class Account
     {
         public int Id { get; set; }
+        public string PublicKey { get; set; }
         public string WalletAddress { get; set; }
         public string FullName { get; set; }
         public Uri ProfilePhoto { get; set; }
