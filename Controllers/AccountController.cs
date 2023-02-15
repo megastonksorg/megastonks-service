@@ -2,6 +2,7 @@
 using Megastonks.Services;
 using Megastonks.Models.Account;
 using Megastonks.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Megastonks.Controllers
 {
@@ -54,6 +55,7 @@ namespace Megastonks.Controllers
             return Ok(response);
         }
 
+        [Authorize]
         [HttpPost("updateName")]
         public ActionResult<string> UpdateName(string fullName)
         {
