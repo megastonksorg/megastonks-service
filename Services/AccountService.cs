@@ -44,28 +44,36 @@ namespace Megastonks.Services
 
         public AuthenticateResponse RefreshToken(string token, string ipAddress)
         {
-            var (refreshToken, account) = getRefreshToken(token);
+            try
+            {
+                var (refreshToken, account) = getRefreshToken(token);
 
-            // replace old refresh token with a new one and save
-            var newRefreshToken = generateRefreshToken(ipAddress);
-            refreshToken.Revoked = DateTime.UtcNow;
-            refreshToken.RevokedByIp = ipAddress;
-            refreshToken.ReplacedByToken = newRefreshToken.Token;
+                // replace old refresh token with a new one and save
+                var newRefreshToken = generateRefreshToken(ipAddress);
+                refreshToken.Revoked = DateTime.UtcNow;
+                refreshToken.RevokedByIp = ipAddress;
+                refreshToken.ReplacedByToken = newRefreshToken.Token;
 
-            removeOldRefreshTokens(account);
+                removeOldRefreshTokens(account);
 
-            account.RefreshTokens.Add(newRefreshToken);
+                account.RefreshTokens.Add(newRefreshToken);
 
-            _context.Update(account);
-            _context.SaveChanges();
+                _context.Update(account);
+                _context.SaveChanges();
 
-            // generate new jwt
-            var jwtToken = generateJwtToken(account);
+                // generate new jwt
+                var jwtToken = generateJwtToken(account);
 
-            var response = _mapper.Map<AuthenticateResponse>(account);
-            response.JwtToken = jwtToken;
-            response.RefreshToken = newRefreshToken.Token;
-            return response;
+                var response = _mapper.Map<AuthenticateResponse>(account);
+                response.JwtToken = jwtToken;
+                response.RefreshToken = newRefreshToken.Token;
+                return response;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.StackTrace);
+                throw new AppException(message: e.Message);
+            }
         }
 
         public string RequestAuthentication()
@@ -111,7 +119,7 @@ namespace Megastonks.Services
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message);
+                _logger.LogError(e.StackTrace);
                 throw new AppException(message: e.Message);
             }
         }
@@ -152,7 +160,7 @@ namespace Megastonks.Services
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message);
+                _logger.LogError(e.StackTrace);
                 throw new AppException(e.Message);
             }
         }
