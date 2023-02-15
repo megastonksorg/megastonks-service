@@ -59,7 +59,15 @@ namespace Megastonks.Controllers
         [HttpPost("updateName")]
         public ActionResult<string> UpdateName(string fullName)
         {
-            var response = _accountService.UpdateAccountName(Account, fullName);
+            var response = _accountService.UpdateName(Account, fullName);
+            return Ok(response);
+        }
+
+        [Authorize]
+        [HttpPost("updateProfilePhoto")]
+        public ActionResult<Uri> UpdateProfilePhoto(string photoUrl)
+        {
+            var response = _accountService.UpdateProfilePhoto(Account, photoUrl);
             return Ok(response);
         }
 

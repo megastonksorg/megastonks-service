@@ -19,7 +19,8 @@ namespace Megastonks.Services
         AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress);
         RegisterResponse Register(RegisterRequest model);
         SuccessResponse DoesAccountExist(string walletAddress);
-        string UpdateAccountName(Account account, string fullName);
+        string UpdateName(Account account, string fullName);
+        Uri UpdateProfilePhoto(Account account, string photoUrl);
     }
 
     public class AccountService : IAccountService
@@ -180,7 +181,7 @@ namespace Megastonks.Services
             }
         }
 
-        public string UpdateAccountName(Account account, string fullName)
+        public string UpdateName(Account account, string fullName)
         {
             try
             {
@@ -197,6 +198,32 @@ namespace Megastonks.Services
                     return fullName;
                 }
                 throw new AppException("Name cannot be null or empty");
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.StackTrace);
+                throw new AppException(e.Message);
+            }
+        }
+
+        public Uri UpdateProfilePhoto(Account account, string photoUrl)
+        {
+            try
+            {
+                var user = _context.Accounts.Find(account.Id);
+                Uri profilePhotoUrl;
+                if (!Uri.TryCreate(photoUrl, UriKind.Absolute, out profilePhotoUrl))
+                {
+                    throw new AppException("Invalid Photo Url");
+                }
+                if (user == null)
+                {
+                    throw new AppException("Invalid User");
+                }
+                user.ProfilePhoto = profilePhotoUrl;
+                _context.Update(user);
+                _context.SaveChanges();
+                return profilePhotoUrl;
             }
             catch (Exception e)
             {
