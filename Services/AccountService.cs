@@ -184,7 +184,7 @@ namespace Megastonks.Services
         {
             try
             {
-                var user = _context.Accounts.SingleOrDefault(x => x == account);
+                var user = _context.Accounts.Find(account.Id);
                 if (user == null)
                 {
                     throw new AppException("Invalid User");
