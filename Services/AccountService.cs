@@ -158,34 +158,51 @@ namespace Megastonks.Services
 
         public SuccessResponse DoesAccountExist(string walletAddress)
         {
-            if (walletAddress != null && EthereumSigner.IsAddressValid(walletAddress))
+            try
             {
-                var account = _context.Accounts.SingleOrDefault(x => x.WalletAddress == walletAddress);
-                return new SuccessResponse
+                if (walletAddress != null && EthereumSigner.IsAddressValid(walletAddress))
                 {
-                    Success = account != null
-                };
+                    var account = _context.Accounts.SingleOrDefault(x => x.WalletAddress == walletAddress);
+                    return new SuccessResponse
+                    {
+                        Success = account != null
+                    };
+                }
+                else
+                {
+                    throw new AppException("Invalid Address");
+                }
             }
-            else
+            catch (Exception e)
             {
-                throw new AppException("Invalid Address");
+                _logger.LogError(e.StackTrace);
+                throw new AppException(e.Message);
             }
         }
 
         public string UpdateAccountName(Account account, string fullName)
         {
-            var user = _context.Accounts.SingleOrDefault(x => x == account);
-            if (user == null)
+            try
             {
-                throw new AppException("Invalid User");
+                var user = _context.Accounts.SingleOrDefault(x => x == account);
+                if (user == null)
+                {
+                    throw new AppException("Invalid User");
+                }
+                if (!string.IsNullOrEmpty(fullName))
+                {
+                    user.FullName = fullName;
+                    _context.Update(user);
+                    _context.SaveChanges();
+                    return fullName;
+                }
+                throw new AppException("Name cannot be null or empty");
             }
-            if (!string.IsNullOrEmpty(fullName)) {
-                user.FullName = fullName;
-                _context.Update(user);
-                _context.SaveChanges();
-                return fullName;
+            catch (Exception e)
+            {
+                _logger.LogError(e.StackTrace);
+                throw new AppException(e.Message);
             }
-            throw new AppException("Name cannot be null or empty");
         }
 
         private string generateJwtToken(Account account)
