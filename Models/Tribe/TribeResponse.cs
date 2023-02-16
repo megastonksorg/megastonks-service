@@ -7,6 +7,7 @@ namespace Megastonks.Models.Tribe
         {
             public string FullName { get; set; }
             public Uri ProfilePhoto { get; set; }
+            public string PublicKey { get; set; }
             public string WalletAddress { get; set; }
         }
 
