@@ -55,8 +55,7 @@ namespace Megastonks.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PublicKey")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Role")
                         .HasColumnType("int");
@@ -72,9 +71,6 @@ namespace Megastonks.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PublicKey")
-                        .IsUnique();
 
                     b.HasIndex("WalletAddress")
                         .IsUnique();

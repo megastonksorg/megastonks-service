@@ -17,7 +17,7 @@ namespace Megastonks.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    PublicKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    PublicKey = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     WalletAddress = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ProfilePhoto = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -128,12 +128,6 @@ namespace Megastonks.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Accounts_PublicKey",
-                table: "Accounts",
-                column: "PublicKey",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Accounts_WalletAddress",

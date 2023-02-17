@@ -28,10 +28,6 @@ namespace Megastonks.Helpers
                 .HasIndex(x => new { x.WalletAddress })
                 .IsUnique();
 
-            builder.Entity<Account>()
-                .HasIndex(x => new { x.PublicKey })
-                .IsUnique();
-
             builder.Entity<TribeInviteCode>()
                 .HasIndex(inviteCode => inviteCode.Code)
                 .IsUnique();

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Megastonks.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230215185714_Add_Account_RefreshToken_Role_Tribe_TribeInviteCode_TribeMember")]
+    [Migration("20230217020909_Add_Account_RefreshToken_Role_Tribe_TribeInviteCode_TribeMember")]
     partial class AddAccountRefreshTokenRoleTribeTribeInviteCodeTribeMember
     {
         /// <inheritdoc />
@@ -58,8 +58,7 @@ namespace Megastonks.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PublicKey")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Role")
                         .HasColumnType("int");
@@ -75,9 +74,6 @@ namespace Megastonks.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PublicKey")
-                        .IsUnique();
 
                     b.HasIndex("WalletAddress")
                         .IsUnique();
