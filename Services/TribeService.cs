@@ -100,6 +100,7 @@ namespace Megastonks.Services
                         {
                             Id = tribe.Id.ToString(),
                             Name = tribe.Name,
+                            TimestampId = tribe.TimestampId.ToString(),
                             Members = mapTribeMembersForResponse(tribe.TribeMembers)
                         }
                     );
