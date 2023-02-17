@@ -133,6 +133,9 @@ namespace Megastonks.Services
                     var jwtToken = generateJwtToken(account);
                     var refreshToken = generateRefreshToken(ipAddress);
 
+                    //Update the user's public key evertime they login
+                    account.PublicKey = model.PublicKey;
+
                     // remove old refresh tokens from account
                     removeOldRefreshTokens(account);
 
