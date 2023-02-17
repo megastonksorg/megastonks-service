@@ -48,6 +48,7 @@ namespace Megastonks.Services
 
                 var tribeToAdd = new Tribe {
                     Name = validatedName,
+                    TimestampId = Guid.NewGuid(),
                     Created = DateTime.UtcNow
                 };
 
@@ -71,6 +72,7 @@ namespace Megastonks.Services
                 {
                     Id = tribe.Id.ToString(),
                     Name = tribe.Name,
+                    TimestampId = tribe.TimestampId.ToString(),
                     Members = tribeMembers
                 };
             }
@@ -227,6 +229,7 @@ namespace Megastonks.Services
                     Account = account
                 };
 
+                tribe.TimestampId = Guid.NewGuid();
                 tribe.TribeMembers.Add(tribeMember);
 
                 _context.TribeInviteCodes.Remove(tribeInviteCode);
@@ -239,6 +242,7 @@ namespace Megastonks.Services
                 {
                     Id = tribe.Id.ToString(),
                     Name = tribe.Name,
+                    TimestampId = tribe.TimestampId.ToString(),
                     Members = tribeMembers
                 };
             }
@@ -267,6 +271,7 @@ namespace Megastonks.Services
                         throw new AppException("Cannot leave a tribe you are not a member of");
                     }
 
+                    tribeToLeave.TimestampId = Guid.NewGuid();
                     tribeToLeave.TribeMembers.Remove(member);
 
                     _context.Update(tribeToLeave);

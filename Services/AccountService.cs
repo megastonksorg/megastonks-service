@@ -54,6 +54,7 @@ namespace Megastonks.Services
                 refreshToken.ReplacedByToken = newRefreshToken.Token;
 
                 removeOldRefreshTokens(account);
+                updateAllTribeTimestamps(account);
 
                 account.RefreshTokens.Add(newRefreshToken);
 
@@ -291,6 +292,17 @@ namespace Megastonks.Services
             account.RefreshTokens.RemoveAll(x =>
                 x.IsActive &&
                 x.Created <= DateTime.UtcNow);
+        }
+
+        private void updateAllTribeTimestamps(Account account)
+        {
+            //Update the Tribe Timestamp for all of this user's Tribes
+            var tribes = _context.Tribes.Where(x => x.TribeMembers.Any(y => y.Account == account));
+            foreach (var tribe in tribes)
+            {
+                tribe.TimestampId = Guid.NewGuid();
+                _context.Update(tribe);
+            }
         }
 
         private bool isRegisterModelValid(RegisterRequest model)
