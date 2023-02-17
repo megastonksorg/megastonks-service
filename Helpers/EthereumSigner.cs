@@ -6,12 +6,12 @@ namespace Megastonks.Helpers
 {
 	public static class EthereumSigner
 	{
-		public static bool IsSignatureValid(string message, string walletAddress, string signature)
+		public static bool IsSignatureValid(string messsagePublicKey, string walletAddress, string signature)
         {
             if (IsAddressValid(walletAddress))
             {
                 var sha3Keccak = new Sha3Keccack();
-                string hashedMessage = sha3Keccak.CalculateHash(message);
+                string hashedMessage = sha3Keccak.CalculateHash(messsagePublicKey);
                 byte[] hashedMessageToBytes = ConvertHexStringToByteArray(hashedMessage);
 
                 var signer = new MessageSigner();

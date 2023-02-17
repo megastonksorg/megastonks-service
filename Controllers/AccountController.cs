@@ -26,13 +26,6 @@ namespace Megastonks.Controllers
             return Ok(response);
         }
 
-        [HttpGet("requestAuthentication")]
-        public ActionResult<string> RequestAuthentication()
-        {
-            var response = _accountService.RequestAuthentication();
-            return Ok(response);
-        }
-
         [HttpPost("register")]
         public ActionResult<RegisterResponse> Register([FromBody] RegisterRequest model)
         {

@@ -15,7 +15,6 @@ namespace Megastonks.Services
     public interface IAccountService
     {
         AuthenticateResponse RefreshToken(string token, string ipAddress);
-        string RequestAuthentication();
         AuthenticateResponse Authenticate(AuthenticateRequest model, string ipAddress);
         RegisterResponse Register(RegisterRequest model);
         SuccessResponse DoesAccountExist(string walletAddress);
@@ -76,11 +75,6 @@ namespace Megastonks.Services
             }
         }
 
-        public string RequestAuthentication()
-        {
-            return _appSettings.MessageToSign;
-        }
-
         public RegisterResponse Register(RegisterRequest model)
         {
             try
@@ -128,7 +122,7 @@ namespace Megastonks.Services
         {
             try
             {
-                if (EthereumSigner.IsSignatureValid(_appSettings.MessageToSign, model.WalletAddress, model.Signature))
+                if (EthereumSigner.IsSignatureValid(model.MessagePublicKey, model.WalletAddress, model.Signature))
                 {
                     var account = _context.Accounts.SingleOrDefault(x => x.WalletAddress == model.WalletAddress);
 
