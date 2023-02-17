@@ -6,9 +6,6 @@ namespace Megastonks.Models.Account
     public class RegisterRequest
     {
         [Required]
-        public string PublicKey { get; set; }
-
-        [Required]
         public string WalletAddress { get; set; }
 
         [Required]
