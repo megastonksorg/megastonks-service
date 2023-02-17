@@ -338,6 +338,7 @@ namespace Megastonks.Services
                     {
                         FullName = member.Account.FullName,
                         ProfilePhoto = member.Account.ProfilePhoto,
+                        PublicKey = member.Account.PublicKey,
                         WalletAddress = member.Account.WalletAddress
                     }
                 );
