@@ -13,6 +13,7 @@ namespace Megastonks.Models.Tribe
 
         public string Id { get; set; }
         public string Name { get; set; }
+        public string TimestampId { get; set; }
         public List<Member> Members { get; set; }
     }
 }

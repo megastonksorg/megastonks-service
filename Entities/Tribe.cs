@@ -7,6 +7,7 @@ namespace Megastonks.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
         public string Name { get; set; }
+        public Guid TimestampId { get; set; }
         public DateTime Created { get; set; }
         public List<TribeMember> TribeMembers { get; set; }
     }
