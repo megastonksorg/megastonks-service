@@ -8,7 +8,7 @@ namespace Megastonks.Models.Account
         public string WalletAddress { get; set; }
 
         [Required]
-        public string MessagePublicKey { get; set; }
+        public string PublicKey { get; set; }
 
         [Required]
         public string Signature { get; set; }

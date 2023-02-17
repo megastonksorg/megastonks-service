@@ -122,7 +122,7 @@ namespace Megastonks.Services
         {
             try
             {
-                if (EthereumSigner.IsSignatureValid(model.MessagePublicKey, model.WalletAddress, model.Signature))
+                if (EthereumSigner.IsSignatureValid(model.PublicKey, model.WalletAddress, model.Signature))
                 {
                     var account = _context.Accounts.SingleOrDefault(x => x.WalletAddress == model.WalletAddress);
 
