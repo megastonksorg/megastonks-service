@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Megastonks.Migrations
 {
     /// <inheritdoc />
-    public partial class AddAccountRefreshTokenRoleTribeTribeInviteCodeTribeMember : Migration
+    public partial class InitialCreateAccountRefreshTokenRoleTribeTribeInviteCodeTribeMember : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -111,7 +111,8 @@ namespace Megastonks.Migrations
                     TribeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    AccountId = table.Column<int>(type: "int", nullable: false)
+                    AccountId = table.Column<int>(type: "int", nullable: false),
+                    Joined = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {

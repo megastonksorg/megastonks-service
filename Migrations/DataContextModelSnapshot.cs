@@ -208,6 +208,9 @@ namespace Megastonks.Migrations
                             b1.Property<int>("AccountId")
                                 .HasColumnType("int");
 
+                            b1.Property<DateTime>("Joined")
+                                .HasColumnType("datetime2");
+
                             b1.HasKey("TribeId", "Id");
 
                             b1.HasIndex("AccountId");

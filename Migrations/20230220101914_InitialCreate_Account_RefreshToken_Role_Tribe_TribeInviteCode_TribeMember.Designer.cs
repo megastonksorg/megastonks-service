@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Megastonks.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230217080805_Add_Account_RefreshToken_Role_Tribe_TribeInviteCode_TribeMember")]
-    partial class AddAccountRefreshTokenRoleTribeTribeInviteCodeTribeMember
+    [Migration("20230220101914_InitialCreate_Account_RefreshToken_Role_Tribe_TribeInviteCode_TribeMember")]
+    partial class InitialCreateAccountRefreshTokenRoleTribeTribeInviteCodeTribeMember
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -210,6 +210,9 @@ namespace Megastonks.Migrations
 
                             b1.Property<int>("AccountId")
                                 .HasColumnType("int");
+
+                            b1.Property<DateTime>("Joined")
+                                .HasColumnType("datetime2");
 
                             b1.HasKey("TribeId", "Id");
 
