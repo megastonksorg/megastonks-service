@@ -59,7 +59,8 @@ namespace Megastonks.Services
                 var firstTribeMember = new TribeMember
                 {
                     Tribe = tribe!,
-                    Account = account
+                    Account = account,
+                    Joined = DateTime.UtcNow
                 };
 
                 tribe.TribeMembers.Add(firstTribeMember);
@@ -227,7 +228,8 @@ namespace Megastonks.Services
                 TribeMember tribeMember = new TribeMember
                 {
                     Tribe = tribe,
-                    Account = account
+                    Account = account,
+                    Joined = DateTime.UtcNow
                 };
 
                 tribe.TimestampId = Guid.NewGuid();
@@ -345,7 +347,8 @@ namespace Megastonks.Services
                         FullName = member.Account.FullName,
                         ProfilePhoto = member.Account.ProfilePhoto,
                         PublicKey = member.Account.PublicKey!,
-                        WalletAddress = member.Account.WalletAddress
+                        WalletAddress = member.Account.WalletAddress,
+                        Joined = member.Joined
                     }
                 );
             }

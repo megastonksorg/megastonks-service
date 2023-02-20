@@ -7,5 +7,6 @@ namespace Megastonks.Entities
     {
         public Tribe Tribe { get; set; }
         public Account Account { get; set; }
+        public DateTime Joined { get; set; }
     }
 }
