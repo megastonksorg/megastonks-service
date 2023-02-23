@@ -317,7 +317,7 @@ namespace Megastonks.Services
 
         private void removeOldRefreshTokens(Account account)
         {
-            //Remove all refresh tokens and not only inactive old ones. This should prevent the user from having two active sessions after the jwt tokens have expired
+            //Remove all active refresh tokens. This should prevent the user from having two active sessions after the jwt tokens have expired
             account.RefreshTokens.RemoveAll(x =>
                 x.IsActive &&
                 x.Created <= DateTime.UtcNow);
