@@ -50,8 +50,18 @@ namespace Megastonks.Services
                 // replace old refresh token with a new one and save
                 var newRefreshToken = generateRefreshToken(ipAddress);
 
-                var newRefreshTokenHashed = newRefreshToken;
-                newRefreshTokenHashed.Token = EthereumSigner.HashMessage(newRefreshToken.Token);
+                var newRefreshTokenHashed = new RefreshToken
+                {
+                    Id = newRefreshToken.Id,
+                    Account = newRefreshToken.Account,
+                    Token = EthereumSigner.HashMessage(newRefreshToken.Token),
+                    Expires = newRefreshToken.Expires,
+                    Created = newRefreshToken.Created,
+                    CreatedByIp = newRefreshToken.CreatedByIp,
+                    Revoked = newRefreshToken.Revoked,
+                    RevokedByIp = newRefreshToken.RevokedByIp,
+                    ReplacedByToken = newRefreshToken.ReplacedByToken
+                };
 
                 refreshToken.Revoked = DateTime.UtcNow;
                 refreshToken.RevokedByIp = ipAddress;
@@ -138,9 +148,18 @@ namespace Megastonks.Services
                     var jwtToken = generateJwtToken(account);
                     var refreshToken = generateRefreshToken(ipAddress);
 
-                    var hashedRefreshToken = refreshToken;
-                    hashedRefreshToken.Token = EthereumSigner.HashMessage(refreshToken.Token);
-
+                    var hashedRefreshToken = new RefreshToken
+                    {
+                        Id = refreshToken.Id,
+                        Account = refreshToken.Account,
+                        Token = EthereumSigner.HashMessage(refreshToken.Token),
+                        Expires = refreshToken.Expires,
+                        Created = refreshToken.Created,
+                        CreatedByIp = refreshToken.CreatedByIp,
+                        Revoked = refreshToken.Revoked,
+                        RevokedByIp = refreshToken.RevokedByIp,
+                        ReplacedByToken = refreshToken.ReplacedByToken
+                    };
 
                     //Update the user's public key evertime they login
                     account.PublicKey = model.PublicKey;
