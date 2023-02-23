@@ -49,14 +49,18 @@ namespace Megastonks.Services
 
                 // replace old refresh token with a new one and save
                 var newRefreshToken = generateRefreshToken(ipAddress);
+
+                var newRefreshTokenHashed = newRefreshToken;
+                newRefreshTokenHashed.Token = EthereumSigner.HashMessage(newRefreshToken.Token);
+
                 refreshToken.Revoked = DateTime.UtcNow;
                 refreshToken.RevokedByIp = ipAddress;
-                refreshToken.ReplacedByToken = newRefreshToken.Token;
+                refreshToken.ReplacedByToken = newRefreshTokenHashed.Token;
 
                 removeOldRefreshTokens(account);
                 updateAllTribeTimestamps(account);
 
-                account.RefreshTokens.Add(newRefreshToken);
+                account.RefreshTokens.Add(newRefreshTokenHashed);
 
                 _context.Update(account);
                 _context.SaveChanges();
@@ -134,13 +138,17 @@ namespace Megastonks.Services
                     var jwtToken = generateJwtToken(account);
                     var refreshToken = generateRefreshToken(ipAddress);
 
+                    var hashedRefreshToken = refreshToken;
+                    hashedRefreshToken.Token = EthereumSigner.HashMessage(refreshToken.Token);
+
+
                     //Update the user's public key evertime they login
                     account.PublicKey = model.PublicKey;
 
                     // remove old refresh tokens from account
                     removeOldRefreshTokens(account);
 
-                    account.RefreshTokens.Add(refreshToken);
+                    account.RefreshTokens.Add(hashedRefreshToken);
 
                     // save changes to db
                     _context.Update(account);
@@ -270,10 +278,12 @@ namespace Megastonks.Services
 
         private (RefreshToken, Account) getRefreshToken(string token)
         {
-            var account = _context.Accounts.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == token));
-            if (account == null) throw new AppException("Invalid token");
-            var refreshToken = account.RefreshTokens.Single(x => x.Token == token);
-            if (!refreshToken.IsActive) throw new AppException("Invalid token");
+            string invalidTokenMessage = "Invalid token";
+            string tokenHashed = EthereumSigner.HashMessage(token);
+            var account = _context.Accounts.SingleOrDefault(u => u.RefreshTokens.Any(t => t.Token == tokenHashed));
+            if (account == null) throw new AppException(invalidTokenMessage);
+            var refreshToken = account.RefreshTokens.Single(x => x.Token == tokenHashed);
+            if (!refreshToken.IsActive) throw new AppException(invalidTokenMessage);
             return (refreshToken, account);
         }
 
