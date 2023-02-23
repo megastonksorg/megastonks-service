@@ -37,7 +37,6 @@ namespace Megastonks.Controllers
         public ActionResult<AuthenticateResponse> Authenticate([FromBody]  AuthenticateRequest model)
         {
             var response = _accountService.Authenticate(model, ipAddress());
-            setTokenCookie(response.RefreshToken);
             return Ok(response);
         }
 
