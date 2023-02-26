@@ -7,6 +7,7 @@ namespace Megastonks.Entities.Message
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
+        public Tribe Tribe { get; set; }
         public MessageContent Content { get; set; } 
         public Message? Context { get; set; } 
         public Account? Sender { get; set; }
