@@ -5,12 +5,25 @@ namespace Megastonks.Services
 {
     public interface IMediaUploadService
     {
-        Uri UploadImage(IFormFile file);
+        Uri UploadImageFile(IFormFile file);
         Uri UploadImage(byte[] imageData);
+        Uri UploadVideoFile(IFormFile file);
+        Uri UploadVideo(byte[] videoData);
     }
 
     public class MediaUploadService : IMediaUploadService
     {
+        private readonly int imageSizeLimit = 2_000_000; //2MB in bytes
+        private readonly int videoSizeLimit = 60_000_000; //60MB in bytes
+        private readonly string imageSizeLimitDescription = "2MB"; //2MB
+        private readonly string videoSizeLimitDescription = "60MB"; //60MB
+        private readonly string imageFileExtension = ".png";
+        private readonly string videoFileExtension = ".mp4";
+
+        private readonly string connectionStringSection = "AzureBlobStorage";
+        private readonly string imageContainer = "images";
+        private readonly string videoContainer = "videos";
+
         private readonly ILogger<MediaUploadService> _logger;
         private readonly IConfiguration _configuration;
 
@@ -20,7 +33,7 @@ namespace Megastonks.Services
             _configuration = configuration;
         }
 
-        public Uri UploadImage(IFormFile file)
+        public Uri UploadImageFile(IFormFile file)
         {
             try
             {
@@ -29,22 +42,21 @@ namespace Megastonks.Services
                     throw new AppException(message: "No File In Request: Please attach a file to the request");
                 }
 
-                const string allowedFileExtension = ".png";
                 string fileExtension = Path.GetExtension(file.FileName);
-                if (file.Length > 2000000)
+                if (file.Length > imageSizeLimit)
                 {
-                    throw new AppException(message: "File Size too large: Please upload a file that is less than 2MB");
+                    throw new AppException(message: $"File Size too large: Please upload a file that is less than {imageSizeLimitDescription}");
                 }
-                else if (allowedFileExtension != fileExtension)
+                else if (imageFileExtension != fileExtension)
                 {
-                    throw new AppException(message: "Invalid File Format: Please upload a png file");
+                    throw new AppException(message: $"Invalid File Format: Please upload a {imageFileExtension} file");
                 }
                 else
                 {
-                    BlobServiceClient blobServiceClient = new BlobServiceClient(_configuration.GetConnectionString("AzureBlobStorage"));
-                    BlobContainerClient blobContainerClient = blobServiceClient.GetBlobContainerClient("images");
+                    BlobServiceClient blobServiceClient = new BlobServiceClient(_configuration.GetConnectionString(connectionStringSection));
+                    BlobContainerClient blobContainerClient = blobServiceClient.GetBlobContainerClient(imageContainer);
 
-                    string fileName = $"{Guid.NewGuid()}{allowedFileExtension}";
+                    string fileName = $"{Guid.NewGuid()}{imageFileExtension}";
                     BlobClient blobClient = blobContainerClient.GetBlobClient(fileName);
                     blobClient.Upload(file.OpenReadStream());
                     return blobClient.Uri;
@@ -67,17 +79,81 @@ namespace Megastonks.Services
 
                 Stream stream = new MemoryStream(imageData);
 
-                if (stream.Length > 2097152)
+                if (stream.Length > imageSizeLimit)
                 {
-                    throw new AppException(message: "Image Size too large: Please upload an image that is less than 2MB");
+                    throw new AppException(message: $"Image Size too large: Please upload an image that is less than {imageSizeLimitDescription}");
                 }
 
-                const string allowedFileExtension = ".png";
+                BlobServiceClient blobServiceClient = new(_configuration.GetConnectionString(connectionStringSection));
+                BlobContainerClient blobContainerClient = blobServiceClient.GetBlobContainerClient(imageContainer);
 
-                BlobServiceClient blobServiceClient = new(_configuration.GetConnectionString("AzureBlobStorage"));
-                BlobContainerClient blobContainerClient = blobServiceClient.GetBlobContainerClient("images");
+                string fileName = $"{Guid.NewGuid()}{imageFileExtension}";
+                BlobClient blobClient = blobContainerClient.GetBlobClient(fileName);
+                blobClient.Upload(stream);
+                return blobClient.Uri;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message);
+                throw new AppException(e.Message);
+            }
+        }
 
-                string fileName = $"{Guid.NewGuid()}{allowedFileExtension}";
+        public Uri UploadVideoFile(IFormFile file)
+        {
+            try
+            {
+                if (file == null)
+                {
+                    throw new AppException(message: "No File In Request: Please attach a file to the request");
+                }
+
+                string fileExtension = Path.GetExtension(file.FileName);
+                if (file.Length > videoSizeLimit)
+                {
+                    throw new AppException(message: $"File Size too large: Please upload a file that is less than {videoSizeLimitDescription}");
+                }
+                else if (videoFileExtension != fileExtension)
+                {
+                    throw new AppException(message: $"Invalid File Format: Please upload an {videoFileExtension} file");
+                }
+                else
+                {
+                    BlobServiceClient blobServiceClient = new BlobServiceClient(_configuration.GetConnectionString(connectionStringSection));
+                    BlobContainerClient blobContainerClient = blobServiceClient.GetBlobContainerClient(videoContainer);
+
+                    string fileName = $"{Guid.NewGuid()}{videoFileExtension}";
+                    BlobClient blobClient = blobContainerClient.GetBlobClient(fileName);
+                    blobClient.Upload(file.OpenReadStream());
+                    return blobClient.Uri;
+                }
+            }
+            catch (Exception e)
+            {
+                throw new AppException(e.Message);
+            }
+        }
+
+        public Uri UploadVideo(byte[] videoData)
+        {
+            try
+            {
+                if (videoData == null)
+                {
+                    throw new AppException(message: "No Data In Request: Please attach video data to the request");
+                }
+
+                Stream stream = new MemoryStream(videoData);
+
+                if (stream.Length > videoSizeLimit)
+                {
+                    throw new AppException(message: $"Video Size too large: Please upload a video that is less than {videoSizeLimitDescription}");
+                }
+
+                BlobServiceClient blobServiceClient = new(_configuration.GetConnectionString(connectionStringSection));
+                BlobContainerClient blobContainerClient = blobServiceClient.GetBlobContainerClient(videoContainer);
+
+                string fileName = $"{Guid.NewGuid()}{videoFileExtension}";
                 BlobClient blobClient = blobContainerClient.GetBlobClient(fileName);
                 blobClient.Upload(stream);
                 return blobClient.Uri;

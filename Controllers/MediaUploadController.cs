@@ -18,7 +18,7 @@ namespace Megastonks.Controllers
         public ActionResult<Uri> Image()
         {
             IFormFile file = Request.Form.Files.FirstOrDefault();
-            var response = _mediaUploadService.UploadImage(file);
+            var response = _mediaUploadService.UploadImageFile(file);
             return Ok(response);
         }
 
@@ -30,4 +30,3 @@ namespace Megastonks.Controllers
         }
     }
 }
-
