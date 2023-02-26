@@ -2,7 +2,7 @@
 
 namespace Megastonks.Models.Message
 {
-    public class MessagePostRequest
+    public class PostMessageReqest
     {
         public class Key
         {
