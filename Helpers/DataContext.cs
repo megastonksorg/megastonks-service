@@ -42,7 +42,7 @@ namespace Megastonks.Helpers
 
             builder.Entity<Message>()
                 .Property(x => x.Tag)
-            .HasConversion<string>();
+                .HasConversion<string>();
 
             builder.Entity<Message>(messageBuilder =>
             {
