@@ -24,13 +24,11 @@ namespace Megastonks.Services
         private readonly int tribeNameLimit = 24;
         private readonly ILogger<TribeService> _logger;
         private readonly DataContext _context;
-        private readonly IMapper _mapper;
 
-        public TribeService(ILogger<TribeService> logger, DataContext context, IMapper mapper)
+        public TribeService(ILogger<TribeService> logger, DataContext context)
         {
             _logger = logger;
             _context = context;
-            _mapper = mapper;
         }
 
         public TribeResponse CreateTribe(Account account, string name)
