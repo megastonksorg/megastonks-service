@@ -51,6 +51,7 @@
     <None Remove="Entities\Tribe\" />
     <None Remove="Entities\Account\" />
     <None Remove="Entities\Message\" />
+    <None Remove="Models\Message\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Middleware\" />
@@ -64,5 +65,6 @@
     <Folder Include="Entities\Tribe\" />
     <Folder Include="Entities\Account\" />
     <Folder Include="Entities\Message\" />
+    <Folder Include="Models\Message\" />
   </ItemGroup>
 </Project>
