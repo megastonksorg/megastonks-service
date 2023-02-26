@@ -1,5 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Megastonks.Entities.Message;
 using Megastonks.Entities;
+using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
+using System.Reflection.Emit;
 
 namespace Megastonks.Helpers
 {
@@ -8,6 +11,7 @@ namespace Megastonks.Helpers
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Tribe> Tribes { get; set; }
         public DbSet<TribeInviteCode> TribeInviteCodes { get; set; }
+        public DbSet<Message> Message { get; set; }
 
         private readonly IConfiguration Configuration;
 
@@ -35,6 +39,18 @@ namespace Megastonks.Helpers
             builder.Entity<TribeInviteCode>()
                 .HasIndex(inviteCode => inviteCode.Code)
                 .IsUnique();
+
+            builder.Entity<Message>()
+                .Property(x => x.Tag)
+            .HasConversion<string>();
+
+            builder.Entity<Message>(messageBuilder =>
+            {
+                messageBuilder.OwnsOne(message => message.Content, contentBuilder =>
+                {
+                    contentBuilder.Property(content => content.Type).HasConversion<string>();
+                });
+            });
         }
     }
 }
