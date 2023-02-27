@@ -19,6 +19,8 @@ namespace Megastonks.Models.Message
 
         public MessageContent Content { get; set; }
         public string ContextId { get; set; }
+        public string TribeId { get; set; }
+        public string TribeTimeStampId { get; set; }
         public List<Key> Keys { get; set; }
     }
 }
