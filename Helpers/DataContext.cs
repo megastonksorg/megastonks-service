@@ -41,16 +41,12 @@ namespace Megastonks.Helpers
                 .IsUnique();
 
             builder.Entity<Message>()
+              .Property(x => x.Type)
+              .HasConversion<string>();
+
+            builder.Entity<Message>()
                 .Property(x => x.Tag)
                 .HasConversion<string>();
-
-            builder.Entity<Message>(messageBuilder =>
-            {
-                messageBuilder.OwnsOne(message => message.Content, contentBuilder =>
-                {
-                    contentBuilder.Property(content => content.Type).HasConversion<string>();
-                });
-            });
         }
     }
 }

@@ -8,9 +8,14 @@ namespace Megastonks.Entities.Message
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
         public Tribe Tribe { get; set; }
-        public MessageContent Content { get; set; }
         public Message? Context { get; set; }
         public Account? Sender { get; set; }
+
+        public string Body { get; set; }
+        public string Caption { get; set; }
+
+        [Column(TypeName = "nvarchar(24)")]
+        public MessageType Type { get; set; }
 
         [Column(TypeName = "nvarchar(24)")]
         public MessageTag Tag { get; set; }

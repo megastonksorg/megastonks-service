@@ -7,7 +7,7 @@ namespace Megastonks.Entities.Message
     public class MessageReaction
     {
         public Message Message { get; set; }
-        public Account Sender { get; set; }
+        public Account? Sender { get; set; }
         public string Content { get; set; }
     }
 }
