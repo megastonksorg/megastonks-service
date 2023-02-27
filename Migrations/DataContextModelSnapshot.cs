@@ -88,6 +88,14 @@ namespace Megastonks.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Caption")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid?>("ContextId")
                         .HasColumnType("uniqueidentifier");
 
@@ -106,6 +114,10 @@ namespace Megastonks.Migrations
 
                     b.Property<Guid>("TribeId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(24)");
 
                     b.HasKey("Id");
 
@@ -244,33 +256,6 @@ namespace Megastonks.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("Megastonks.Entities.Message.MessageContent", "Content", b1 =>
-                        {
-                            b1.Property<Guid>("MessageId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<string>("Body")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("Caption")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(max)");
-
-                            b1.Property<string>("Type")
-                                .IsRequired()
-                                .HasColumnType("nvarchar(24)");
-
-                            b1.HasKey("MessageId");
-
-                            b1.ToTable("Message");
-
-                            b1.WithOwner("Message")
-                                .HasForeignKey("MessageId");
-
-                            b1.Navigation("Message");
-                        });
-
                     b.OwnsMany("Megastonks.Entities.Message.MessageKey", "Keys", b1 =>
                         {
                             b1.Property<Guid>("MessageId")
@@ -315,7 +300,7 @@ namespace Megastonks.Migrations
                                 .IsRequired()
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<int>("SenderId")
+                            b1.Property<int?>("SenderId")
                                 .HasColumnType("int");
 
                             b1.HasKey("MessageId", "Id");
@@ -329,17 +314,12 @@ namespace Megastonks.Migrations
 
                             b1.HasOne("Megastonks.Entities.Account", "Sender")
                                 .WithMany()
-                                .HasForeignKey("SenderId")
-                                .OnDelete(DeleteBehavior.Cascade)
-                                .IsRequired();
+                                .HasForeignKey("SenderId");
 
                             b1.Navigation("Message");
 
                             b1.Navigation("Sender");
                         });
-
-                    b.Navigation("Content")
-                        .IsRequired();
 
                     b.Navigation("Context");
 

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Megastonks.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230220101914_InitialCreate_Account_RefreshToken_Role_Tribe_TribeInviteCode_TribeMember")]
-    partial class InitialCreateAccountRefreshTokenRoleTribeTribeInviteCodeTribeMember
+    [Migration("20230227140857_InitialCreate_Account_RefreshToken_Role_Tribe_TribeInviteCode_TribeMember_Message_MessageKey_MessageReaction")]
+    partial class InitialCreateAccountRefreshTokenRoleTribeTribeInviteCodeTribeMemberMessageMessageKeyMessageReaction
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -83,6 +83,54 @@ namespace Megastonks.Migrations
                         .IsUnique();
 
                     b.ToTable("Accounts");
+                });
+
+            modelBuilder.Entity("Megastonks.Entities.Message.Message", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Caption")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("ContextId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("Expires")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("SenderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Tag")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(24)");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("TribeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(24)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContextId");
+
+                    b.HasIndex("SenderId");
+
+                    b.HasIndex("TribeId");
+
+                    b.ToTable("Message");
                 });
 
             modelBuilder.Entity("Megastonks.Entities.Tribe", b =>
@@ -193,6 +241,98 @@ namespace Megastonks.Migrations
                         });
 
                     b.Navigation("RefreshTokens");
+                });
+
+            modelBuilder.Entity("Megastonks.Entities.Message.Message", b =>
+                {
+                    b.HasOne("Megastonks.Entities.Message.Message", "Context")
+                        .WithMany()
+                        .HasForeignKey("ContextId");
+
+                    b.HasOne("Megastonks.Entities.Account", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId");
+
+                    b.HasOne("Megastonks.Entities.Tribe", "Tribe")
+                        .WithMany()
+                        .HasForeignKey("TribeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsMany("Megastonks.Entities.Message.MessageKey", "Keys", b1 =>
+                        {
+                            b1.Property<Guid>("MessageId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
+
+                            b1.Property<string>("EncryptionKey")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("PublicKey")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("MessageId", "Id");
+
+                            b1.ToTable("MessageKey");
+
+                            b1.WithOwner("Message")
+                                .HasForeignKey("MessageId");
+
+                            b1.Navigation("Message");
+                        });
+
+                    b.OwnsMany("Megastonks.Entities.Message.MessageReaction", "Reactions", b1 =>
+                        {
+                            b1.Property<Guid>("MessageId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b1.Property<int>("Id"));
+
+                            b1.Property<string>("Content")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<int?>("SenderId")
+                                .HasColumnType("int");
+
+                            b1.HasKey("MessageId", "Id");
+
+                            b1.HasIndex("SenderId");
+
+                            b1.ToTable("MessageReaction");
+
+                            b1.WithOwner("Message")
+                                .HasForeignKey("MessageId");
+
+                            b1.HasOne("Megastonks.Entities.Account", "Sender")
+                                .WithMany()
+                                .HasForeignKey("SenderId");
+
+                            b1.Navigation("Message");
+
+                            b1.Navigation("Sender");
+                        });
+
+                    b.Navigation("Context");
+
+                    b.Navigation("Keys");
+
+                    b.Navigation("Reactions");
+
+                    b.Navigation("Sender");
+
+                    b.Navigation("Tribe");
                 });
 
             modelBuilder.Entity("Megastonks.Entities.Tribe", b =>

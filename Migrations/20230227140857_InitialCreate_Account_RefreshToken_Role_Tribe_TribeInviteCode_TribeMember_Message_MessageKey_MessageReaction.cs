@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Megastonks.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreateAccountRefreshTokenRoleTribeTribeInviteCodeTribeMember : Migration
+    public partial class InitialCreateAccountRefreshTokenRoleTribeTribeInviteCodeTribeMemberMessageMessageKeyMessageReaction : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -76,6 +76,42 @@ namespace Megastonks.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Message",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TribeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ContextId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    SenderId = table.Column<int>(type: "int", nullable: true),
+                    Body = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Caption = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(24)", nullable: false),
+                    Tag = table.Column<string>(type: "nvarchar(24)", nullable: false),
+                    Expires = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    TimeStamp = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Message", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Message_Accounts_SenderId",
+                        column: x => x.SenderId,
+                        principalTable: "Accounts",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Message_Message_ContextId",
+                        column: x => x.ContextId,
+                        principalTable: "Message",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Message_Tribes_TribeId",
+                        column: x => x.TribeId,
+                        principalTable: "Tribes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TribeInviteCodes",
                 columns: table => new
                 {
@@ -131,6 +167,53 @@ namespace Megastonks.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "MessageKey",
+                columns: table => new
+                {
+                    MessageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PublicKey = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EncryptionKey = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MessageKey", x => new { x.MessageId, x.Id });
+                    table.ForeignKey(
+                        name: "FK_MessageKey_Message_MessageId",
+                        column: x => x.MessageId,
+                        principalTable: "Message",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MessageReaction",
+                columns: table => new
+                {
+                    MessageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SenderId = table.Column<int>(type: "int", nullable: true),
+                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MessageReaction", x => new { x.MessageId, x.Id });
+                    table.ForeignKey(
+                        name: "FK_MessageReaction_Accounts_SenderId",
+                        column: x => x.SenderId,
+                        principalTable: "Accounts",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MessageReaction_Message_MessageId",
+                        column: x => x.MessageId,
+                        principalTable: "Message",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Accounts_PublicKey",
                 table: "Accounts",
@@ -143,6 +226,26 @@ namespace Megastonks.Migrations
                 table: "Accounts",
                 column: "WalletAddress",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Message_ContextId",
+                table: "Message",
+                column: "ContextId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Message_SenderId",
+                table: "Message",
+                column: "SenderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Message_TribeId",
+                table: "Message",
+                column: "TribeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MessageReaction_SenderId",
+                table: "MessageReaction",
+                column: "SenderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RefreshToken_AccountId",
@@ -175,6 +278,12 @@ namespace Megastonks.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "MessageKey");
+
+            migrationBuilder.DropTable(
+                name: "MessageReaction");
+
+            migrationBuilder.DropTable(
                 name: "RefreshToken");
 
             migrationBuilder.DropTable(
@@ -182,6 +291,9 @@ namespace Megastonks.Migrations
 
             migrationBuilder.DropTable(
                 name: "TribeMember");
+
+            migrationBuilder.DropTable(
+                name: "Message");
 
             migrationBuilder.DropTable(
                 name: "Accounts");
