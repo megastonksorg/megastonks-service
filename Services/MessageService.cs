@@ -1,12 +1,14 @@
 ﻿using System;
 using AutoMapper;
+using Megastonks.Entities;
 using Megastonks.Helpers;
+using Megastonks.Models.Message;
 
 namespace Megastonks.Services
 {
     public interface IMessageService
     {
-
+        MessageResponse PostMessage(Account account, PostMessageReqest model);
     }
 
     public class MessageService : IMessageService
@@ -20,6 +22,11 @@ namespace Megastonks.Services
             _logger = logger;
             _context = context;
             _mapper = mapper;
+        }
+
+        public MessageResponse PostMessage(Account account, PostMessageReqest model)
+        {
+
         }
     }
 }
