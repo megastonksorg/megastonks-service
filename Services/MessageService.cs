@@ -70,14 +70,31 @@ namespace Megastonks.Services
 
                 newMessage.Keys.AddRange(keys);
 
-                MessageResponse response = _mapper.Map<Message, MessageResponse>(newMessage);
-                return response;
+                return mapMessageToMessageResponse(newMessage);
             }
             catch (Exception e)
             {
                 _logger.LogError(e.StackTrace);
                 throw new AppException(e.Message);
             }
+        }
+
+        private MessageResponse mapMessageToMessageResponse(Message message)
+        {
+            return new MessageResponse
+            {
+                Id = message.Id.ToString(),
+                Body = message.Body,
+                Caption = message.Caption,
+                Type = message.Type.ToString(),
+                SenderWalletAddress = message.Sender.WalletAddress,
+                Tag = message.Tag.ToString(),
+                Context = mapMessageToMessageResponse(message),
+                Keys = message.Keys.Select(_mapper.Map<MessageKey, MessageKeyModel>).ToList(),
+                Reactions = message.Reactions.Select(_mapper.Map<MessageReaction, MessageResponse.Reaction>).ToList(),
+                Expires = message.Expires,
+                TimeStamp = message.TimeStamp
+            };
         }
     }
 }
