@@ -44,6 +44,11 @@ namespace Megastonks.Services
                     throw new AppException("Invalid Tribe Id");
                 }
 
+                if (tribe.TimestampId != Guid.Parse(model.TribeTimestampId))
+                {
+                    throw new AppException("Invalid Tribe TimestampId");
+                }
+
                 if (model.ContextId != null)
                 {
                     contextMessage = _context.Message
