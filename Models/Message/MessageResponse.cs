@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Megastonks.Models.Message
 {
@@ -7,15 +6,15 @@ namespace Megastonks.Models.Message
     {
         public class Reaction
         {
-            public string? SenderWalletAddress { get; set; }
+            public string SenderWalletAddress { get; set; }
             public string Content { get; set; }
         }
 
         public string Id { get; set; }
         public string Body { get; set; }
-        public string Caption { get; set; }
+        public string? Caption { get; set; }
         public string Type { get; set; }
-        public string? SenderWalletAddress { get; set; }
+        public string SenderWalletAddress { get; set; }
         public string Tag { get; set; }
         public MessageResponse? Context { get; set; }
         public List<MessageKeyModel> Keys { get; set; }

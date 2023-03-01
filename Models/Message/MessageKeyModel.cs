@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace Megastonks.Models.Message
 {
     public class MessageKeyModel
