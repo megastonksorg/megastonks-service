@@ -5,7 +5,7 @@ namespace Megastonks.Models.Message
     public class PostMessageRequest
     {
         public string Body { get; set; }
-        public string Caption { get; set; }
+        public string? Caption { get; set; }
         public string Type { get; set; }
         public string? ContextId { get; set; }
         public string TribeId { get; set; }
