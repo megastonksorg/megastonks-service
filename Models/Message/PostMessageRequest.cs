@@ -2,7 +2,7 @@
 
 namespace Megastonks.Models.Message
 {
-    public class PostMessageReqest
+    public class PostMessageRequest
     {
         public string Body { get; set; }
         public string Caption { get; set; }

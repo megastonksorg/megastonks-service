@@ -10,7 +10,7 @@ namespace Megastonks.Services
 {
     public interface IMessageService
     {
-        MessageResponse PostMessage(Account account, MessageTag messageTag, PostMessageReqest model);
+        MessageResponse PostMessage(Account account, MessageTag messageTag, PostMessageRequest model);
     }
 
     public class MessageService : IMessageService
@@ -26,7 +26,7 @@ namespace Megastonks.Services
             _mapper = mapper;
         }
 
-        public MessageResponse PostMessage(Account account, MessageTag messageTag, PostMessageReqest model)
+        public MessageResponse PostMessage(Account account, MessageTag messageTag, PostMessageRequest model)
         {
             try
             {

@@ -12,16 +12,16 @@ namespace Megastonks.Controllers
     [Controller]
     [Route("[controller]")]
     public class MessageController : BaseController
-	{
+    {
         private readonly IMessageService _messageService;
 
         public MessageController(IMessageService messageService)
-		{
-			_messageService = messageService;
-		}
+        {
+            _messageService = messageService;
+        }
 
         [HttpPost("tea")]
-        public ActionResult<MessageResponse> PostMessage([FromBody] PostMessageReqest model)
+        public ActionResult<MessageResponse> PostMessage([FromBody] PostMessageRequest model)
         {
             var result = _messageService.PostMessage(Account, Entities.Message.MessageTag.tea, model);
             return Ok(result);
