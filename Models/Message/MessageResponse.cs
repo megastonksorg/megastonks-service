@@ -13,6 +13,7 @@ namespace Megastonks.Models.Message
         public string Id { get; set; }
         public string Body { get; set; }
         public string? Caption { get; set; }
+        public bool Deleted { get; set; }
         public string Type { get; set; }
         public string SenderWalletAddress { get; set; }
         public string Tag { get; set; }
