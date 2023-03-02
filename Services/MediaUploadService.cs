@@ -13,7 +13,7 @@ namespace Megastonks.Services
 
     public class MediaUploadService : IMediaUploadService
     {
-        private readonly int imageSizeLimit = 2_000_000; //2MB in bytes
+        private readonly int imageSizeLimit = 10_000_000; //10MB in bytes
         private readonly int videoSizeLimit = 60_000_000; //60MB in bytes
         private readonly string imageSizeLimitDescription = "2MB"; //2MB
         private readonly string videoSizeLimitDescription = "60MB"; //60MB
