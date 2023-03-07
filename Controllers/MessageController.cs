@@ -20,6 +20,13 @@ namespace Megastonks.Controllers
             _messageService = messageService;
         }
 
+        [HttpGet]
+        public ActionResult<List<MessageResponse>> GetMessages(string tribeId)
+        {
+            var result = _messageService.GetMessages(Account, tribeId);
+            return Ok(result);
+        }
+
         [HttpPost("tea")]
         public ActionResult<MessageResponse> PostMessage([FromBody] PostMessageRequest model)
         {
