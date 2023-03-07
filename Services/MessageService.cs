@@ -10,6 +10,7 @@ namespace Megastonks.Services
 {
     public interface IMessageService
     {
+        List<MessageResponse> GetMessages(Account account, string tribeId);
         MessageResponse PostMessage(Account account, MessageTag messageTag, PostMessageRequest model);
     }
 
@@ -24,6 +25,45 @@ namespace Megastonks.Services
             _logger = logger;
             _context = context;
             _mapper = mapper;
+        }
+
+        public List<MessageResponse> GetMessages(Account account, string tribeId)
+        {
+            try
+            {
+                //Ensure the tribe id is valid and the user is a member of that tribe
+                var tribe = _context.Tribes
+                    .Include(x => x.TribeMembers)
+                    .ThenInclude(y => y.Account)
+                    .Where(x => x.Id == Guid.Parse(tribeId) && x.TribeMembers.Any(y => y.Account == account))
+                    .FirstOrDefault();
+
+                if (tribe == null)
+                {
+                    throw new AppException("Invalid Tribe Id");
+                }
+
+                var messages = _context.Message
+                    .Include(x => x.Context)
+                    .Include(x => x.Sender)
+                    .Include(x => x.Keys)
+                    .Include(x => x.Reactions)
+                    .Where(x => x.Tribe == tribe && !x.HasExpired && !x.Deleted)
+                    .ToList();
+
+                List<MessageResponse> messagesResponse = new List<MessageResponse>();
+                foreach(var message in messages)
+                {
+                    messagesResponse.Append(mapMessageToMessageResponse(message));
+                }
+
+                return messagesResponse;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.StackTrace);
+                throw new AppException(e.Message);
+            }
         }
 
         public MessageResponse PostMessage(Account account, MessageTag messageTag, PostMessageRequest model)
