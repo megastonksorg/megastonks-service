@@ -75,6 +75,9 @@ namespace Megastonks.Services
 
                 newMessage.Keys.AddRange(keys);
 
+                _context.Add(newMessage);
+                _context.SaveChanges();
+
                 return mapMessageToMessageResponse(newMessage);
             }
             catch (Exception e)
