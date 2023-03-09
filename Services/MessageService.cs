@@ -48,7 +48,9 @@ namespace Megastonks.Services
                     .Include(x => x.Sender)
                     .Include(x => x.Keys)
                     .Include(x => x.Reactions)
-                    .Where(x => x.Tribe == tribe && !x.HasExpired && !x.Deleted)
+                    .Where(x => x.Tribe == tribe && !x.Deleted)
+                    .AsEnumerable()
+                    .Where(x => !x.HasExpired())
                     .ToList();
 
                 List<MessageResponse> messagesResponse = new List<MessageResponse>();
