@@ -153,7 +153,7 @@ namespace Megastonks.Services
                 Type = message.Type.ToString(),
                 SenderWalletAddress = message.Sender.WalletAddress,
                 Tag = message.Tag.ToString(),
-                Context = mapMessageToMessageResponse(message),
+                Context = message.Context == null ? null : mapMessageToMessageResponse(message.Context),
                 Keys = message.Keys.Select(_mapper.Map<MessageKey, MessageKeyModel>).ToList(),
                 Reactions = message.Reactions.Select(_mapper.Map<MessageReaction, MessageResponse.Reaction>).ToList(),
                 Expires = message.Expires,
