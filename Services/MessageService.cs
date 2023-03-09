@@ -122,6 +122,7 @@ namespace Megastonks.Services
                         .Add(
                             new MessageKey
                             {
+                                Message = newMessage,
                                 PublicKey = key.PublicKey,
                                 EncryptionKey = key.EncryptionKey
                             }
