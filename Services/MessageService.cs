@@ -54,7 +54,7 @@ namespace Megastonks.Services
                     .ToList();
 
                 List<MessageResponse> messagesResponse = new List<MessageResponse>();
-                foreach(var message in messages)
+                foreach (var message in messages)
                 {
                     messagesResponse.Append(mapMessageToMessageResponse(message));
                 }
@@ -109,15 +109,24 @@ namespace Megastonks.Services
                     Sender = account,
                     Body = model.Body,
                     Caption = model.Caption,
-                    Type = (MessageType) Enum.Parse(typeof(MessageType), model.Type),
+                    Type = (MessageType)Enum.Parse(typeof(MessageType), model.Type),
                     Tag = messageTag,
                     Expires = messageTag == MessageTag.tea ? DateTime.UtcNow.AddHours(24) : null,
                     TimeStamp = DateTime.UtcNow
                 };
 
-                List<MessageKey> keys = model.Keys.Select(_mapper.Map<MessageKeyModel, MessageKey>).ToList();
-
-                newMessage.Keys.AddRange(keys);
+                foreach (var key in model.Keys)
+                {
+                    newMessage
+                        .Keys
+                        .Add(
+                            new MessageKey
+                            {
+                                PublicKey = key.PublicKey,
+                                EncryptionKey = key.EncryptionKey
+                            }
+                        );
+                }
 
                 _context.Add(newMessage);
                 _context.SaveChanges();
