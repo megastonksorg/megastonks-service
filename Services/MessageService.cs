@@ -111,6 +111,8 @@ namespace Megastonks.Services
                     Caption = model.Caption,
                     Type = (MessageType)Enum.Parse(typeof(MessageType), model.Type),
                     Tag = messageTag,
+                    Keys = new List<MessageKey>(),
+                    Reactions = new List<MessageReaction>(),
                     Expires = messageTag == MessageTag.tea ? DateTime.UtcNow.AddHours(24) : null,
                     TimeStamp = DateTime.UtcNow
                 };
