@@ -11,7 +11,7 @@ namespace Megastonks.Services
     public interface IMessageService
     {
         List<MessageResponse> GetMessages(Account account, string tribeId);
-        MessageResponse PostMessage(Account account, MessageTag messageTag, PostMessageRequest model);
+        MessageResponse PostMessage(Account account, PostMessageRequest model);
     }
 
     public class MessageService : IMessageService
@@ -66,7 +66,7 @@ namespace Megastonks.Services
             }
         }
 
-        public MessageResponse PostMessage(Account account, MessageTag messageTag, PostMessageRequest model)
+        public MessageResponse PostMessage(Account account, PostMessageRequest model)
         {
             try
             {
@@ -97,6 +97,8 @@ namespace Megastonks.Services
                         .Where(y => y.Id == Guid.Parse(model.ContextId))
                         .FirstOrDefault();
                 }
+
+                MessageTag messageTag = (MessageTag)Enum.Parse(typeof(MessageTag), model.Tag);
 
                 var newMessage = new Message
                 {

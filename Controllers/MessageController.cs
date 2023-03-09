@@ -27,10 +27,10 @@ namespace Megastonks.Controllers
             return Ok(result);
         }
 
-        [HttpPost("tea")]
+        [HttpPost]
         public ActionResult<MessageResponse> PostMessage([FromBody] PostMessageRequest model)
         {
-            var result = _messageService.PostMessage(Account, Entities.Message.MessageTag.tea, model);
+            var result = _messageService.PostMessage(Account, model);
             return Ok(result);
         }
     }
