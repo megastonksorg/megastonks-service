@@ -28,6 +28,7 @@ namespace Megastonks.Entities.Message
         public DateTime? Expires { get; set; }
         public DateTime TimeStamp { get; set; }
 
+        [NotMapped]
         public bool HasExpired
         {
             get
