@@ -68,7 +68,6 @@ namespace Megastonks.Services
                 refreshToken.ReplacedByToken = newRefreshTokenHashed.Token;
 
                 removeOldRefreshTokens(account);
-                updateAllTribeTimestamps(account);
 
                 account.RefreshTokens.Add(newRefreshTokenHashed);
 
@@ -169,6 +168,8 @@ namespace Megastonks.Services
 
                     account.RefreshTokens.Add(hashedRefreshToken);
 
+                    //Update the user's tribeTimestampId so all the other tribe members can grab his latest public key
+                    updateAllTribeTimestamps(account);
                     // save changes to db
                     _context.Update(account);
                     _context.SaveChanges();
