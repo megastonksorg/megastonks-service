@@ -56,7 +56,7 @@ namespace Megastonks.Services
                 List<MessageResponse> messagesResponse = new List<MessageResponse>();
                 foreach (var message in messages)
                 {
-                    messagesResponse.Append(mapMessageToMessageResponse(message));
+                    messagesResponse.Add(mapMessageToMessageResponse(message));
                 }
 
                 return messagesResponse;
