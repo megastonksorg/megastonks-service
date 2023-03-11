@@ -1,4 +1,5 @@
 ﻿using System;
+using Megastonks.Models;
 using Megastonks.Models.Account;
 using Megastonks.Models.Message;
 using Megastonks.Models.Tribe;
@@ -31,6 +32,13 @@ namespace Megastonks.Controllers
         public ActionResult<MessageResponse> PostMessage([FromBody] PostMessageRequest model)
         {
             var result = _messageService.PostMessage(Account, model);
+            return Ok(result);
+        }
+
+        [HttpDelete]
+        public ActionResult<SuccessResponse> DeleteMessage(string messageId)
+        {
+            var result = _messageService.DeleteMessage(Account, messageId);
             return Ok(result);
         }
     }

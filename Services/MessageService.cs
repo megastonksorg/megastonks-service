@@ -76,7 +76,7 @@ namespace Megastonks.Services
             {
                 var messageToDelete = _context.Message
                     .Include(x => x.Sender)
-                    .Where(x => x.Sender == account)
+                    .Where(x => x.Sender == account && x.Id == Guid.Parse(messageId))
                     .FirstOrDefault();
 
                 if (messageToDelete == null)
@@ -89,7 +89,8 @@ namespace Megastonks.Services
                 _context.Update(messageToDelete);
                 _context.SaveChanges();
 
-                return new SuccessResponse {
+                return new SuccessResponse
+                {
                     Success = true
                 };
             }
