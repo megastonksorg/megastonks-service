@@ -3,6 +3,7 @@ using AutoMapper;
 using Megastonks.Entities;
 using Megastonks.Entities.Message;
 using Megastonks.Helpers;
+using Megastonks.Models;
 using Megastonks.Models.Message;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,7 @@ namespace Megastonks.Services
     public interface IMessageService
     {
         List<MessageResponse> GetMessages(Account account, string tribeId);
+        SuccessResponse DeleteMessage(Account account, string messageId);
         MessageResponse PostMessage(Account account, PostMessageRequest model);
     }
 
@@ -60,6 +62,36 @@ namespace Megastonks.Services
                 }
 
                 return messagesResponse;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.StackTrace);
+                throw new AppException(e.Message);
+            }
+        }
+
+        public SuccessResponse DeleteMessage(Account account, string messageId)
+        {
+            try
+            {
+                var messageToDelete = _context.Message
+                    .Include(x => x.Sender)
+                    .Where(x => x.Sender == account)
+                    .FirstOrDefault();
+
+                if (messageToDelete == null)
+                {
+                    throw new AppException("Invalid Message Id");
+                }
+
+                var messages = messageToDelete.Deleted = true;
+
+                _context.Update(messageToDelete);
+                _context.SaveChanges();
+
+                return new SuccessResponse {
+                    Success = true
+                };
             }
             catch (Exception e)
             {
