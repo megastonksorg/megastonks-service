@@ -46,11 +46,7 @@ namespace Megastonks.Services
                 }
 
                 var messages = _context.Message
-                    .Include(x => x.Context)
-                    .Include(x => x.Sender)
-                    .Include(x => x.Keys)
-                    .Include(x => x.Reactions)
-                    .Where(x => x.Tribe == tribe && !x.Deleted && x.Expires < DateTime.UtcNow && x.TimeStamp > DateTime.UtcNow.AddHours(-24))
+                    .Where(x => x.Tribe == tribe && !x.Deleted && x.TimeStamp > DateTime.UtcNow.AddHours(-24))
                     .ToList();
 
                 List<MessageResponse> messagesResponse = new List<MessageResponse>();
