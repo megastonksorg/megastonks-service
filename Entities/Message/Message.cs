@@ -27,10 +27,5 @@ namespace Megastonks.Entities.Message
 
         public DateTime? Expires { get; set; }
         public DateTime TimeStamp { get; set; }
-
-        public bool HasExpired()
-        {
-            return Expires < DateTime.UtcNow;
-        }
     }
 }
