@@ -10,6 +10,7 @@ using Microsoft.Identity.Client;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 using Megastonks.Entities;
+using Megastonks.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +33,8 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IMediaUploadService, MediaUploadService>();
 builder.Services.AddScoped<ITribeService, TribeService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
+
+builder.Services.AddSignalR();
 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -90,5 +93,6 @@ app.UseCors(x => x
 app.UseMiddleware<ErrorHandlerMiddleware>();
 
 app.MapControllers();
+app.MapHub<AppHub>("/appHub");
 
 app.Run();
