@@ -3,8 +3,10 @@ using AutoMapper;
 using Megastonks.Entities;
 using Megastonks.Entities.Message;
 using Megastonks.Helpers;
+using Megastonks.Hubs;
 using Megastonks.Models;
 using Megastonks.Models.Message;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Megastonks.Services
@@ -20,12 +22,14 @@ namespace Megastonks.Services
     {
         private readonly ILogger<MessageService> _logger;
         private readonly DataContext _context;
+        private readonly IHubContext<AppHub> _hubContext;
         private readonly IMapper _mapper;
 
-        public MessageService(ILogger<MessageService> logger, DataContext context, IMapper mapper)
+        public MessageService(ILogger<MessageService> logger, DataContext context, IHubContext<AppHub> hubContext, IMapper mapper)
         {
             _logger = logger;
             _context = context;
+            _hubContext = hubContext;
             _mapper = mapper;
         }
 
@@ -54,7 +58,6 @@ namespace Megastonks.Services
                 {
                     messagesResponse.Add(mapMessageToMessageResponse(message));
                 }
-
                 return messagesResponse;
             }
             catch (Exception e)

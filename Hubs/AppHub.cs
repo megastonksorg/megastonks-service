@@ -5,9 +5,14 @@ namespace Megastonks.Hubs
 {
 	public class AppHub : Hub
 	{
-        public async Task SendMessage(string userId, string messageId)
+        public async Task JoinGroup(string groupName)
         {
-            await Clients.All.SendAsync("ReceiveMessage", userId, messageId);
+            await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+        }
+
+        public async Task LeaveGroup(string groupName)
+        {
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
         }
     }
 }
