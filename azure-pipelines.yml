@@ -24,7 +24,6 @@ steps:
 - task: VSBuild@1
   inputs:
     solution: '$(solution)'
-    msbuildArgs: '/p:PackageAsSingleFile=true /p:PackageLocation="$(build.artifactStagingDirectory)/Output"'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
