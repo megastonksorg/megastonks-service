@@ -167,7 +167,7 @@ namespace Megastonks.Services
                 //Notify all tribe members
                 string tribeId = tribe.Id.ToString();
                 MessageResponse messageToSend = mapMessageToMessageResponse(newMessage);
-                await _hubContext.Clients.Group(tribeId).SendAsync("receiveMessage", tribeId, messageToSend);
+                await _hubContext.Clients.Group(tribeId).SendAsync("ReceiveMessage", tribeId, messageToSend);
             }
             catch (Exception e)
             {
