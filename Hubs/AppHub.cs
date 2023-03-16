@@ -21,7 +21,7 @@ namespace Megastonks.Hubs
             try
             {
                 Account account = (Account)Context.GetHttpContext().Items["Account"];
-                var tribe = _dataContext.Tribes.Find(tribeId);
+                var tribe = _dataContext.Tribes.Find(Guid.Parse(tribeId));
 
                 if (account != null && tribe != null)
                 {
