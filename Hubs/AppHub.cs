@@ -1,10 +1,12 @@
 ﻿using System;
 using Megastonks.Entities;
 using Megastonks.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Megastonks.Hubs
 {
+    [Authorize]
     public class AppHub : Hub
     {
         private readonly ILogger<AppHub> _logger;
