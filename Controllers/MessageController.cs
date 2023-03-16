@@ -29,7 +29,7 @@ namespace Megastonks.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Task<SuccessResponse>> PostMessage([FromBody] PostMessageRequest model)
+        public ActionResult PostMessage([FromBody] PostMessageRequest model)
         {
             var result = _messageService.PostMessage(Account, model);
             return Ok(result);

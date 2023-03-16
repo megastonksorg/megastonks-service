@@ -15,7 +15,7 @@ namespace Megastonks.Services
     {
         List<MessageResponse> GetMessages(Account account, string tribeId);
         SuccessResponse DeleteMessage(Account account, string messageId);
-        Task<SuccessResponse> PostMessage(Account account, PostMessageRequest model);
+        Task PostMessage(Account account, PostMessageRequest model);
     }
 
     public class MessageService : IMessageService
@@ -98,7 +98,7 @@ namespace Megastonks.Services
             }
         }
 
-        public async Task<SuccessResponse> PostMessage(Account account, PostMessageRequest model)
+        public async Task PostMessage(Account account, PostMessageRequest model)
         {
             try
             {
@@ -168,11 +168,6 @@ namespace Megastonks.Services
                 string tribeId = tribe.Id.ToString();
                 MessageResponse messageToSend = mapMessageToMessageResponse(newMessage);
                 await _hubContext.Clients.Group(tribeId).SendAsync("receiveMessage", tribeId, messageToSend);
-
-                return new SuccessResponse
-                {
-                    Success = true
-                };
             }
             catch (Exception e)
             {
