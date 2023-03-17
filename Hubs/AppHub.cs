@@ -1,12 +1,11 @@
 ﻿using System;
 using Megastonks.Entities;
 using Megastonks.Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Megastonks.Hubs
 {
-    [Authorize]
     public class AppHub : Hub
     {
         private readonly ILogger<AppHub> _logger;
@@ -18,18 +17,23 @@ namespace Megastonks.Hubs
             _dataContext = dataContext;
         }
 
-        public async Task JoinGroup(string tribeId)
+        public async Task SubscribeToTribes(string walletAddress, string signature)
         {
             try
             {
-                Account account = (Account)Context.GetHttpContext().Items["Account"];
-                var tribe = _dataContext.Tribes.Find(Guid.Parse(tribeId));
-
-                if (account != null && tribe != null)
-                {
-                    if (tribe.TribeMembers.Find(x => x.Account == account) != null)
+                if (EthereumSigner.IsSignatureValid("SubscribeToTribes", walletAddress, signature)) {
+                    var account = _dataContext.Accounts.Where(x => x.WalletAddress == walletAddress).First();
+                    if (account != null)
                     {
-                        await Groups.AddToGroupAsync(Context.ConnectionId, tribeId);
+                        var tribes = _dataContext.Tribes
+                            .Include(x => x.TribeMembers)
+                            .Where(x => x.TribeMembers.Any(y => y.Account == account))
+                            .ToList();
+
+                        foreach(var tribe in tribes)
+                        {
+                            await Groups.AddToGroupAsync(Context.ConnectionId, tribe.Id.ToString());
+                        }
                     }
                 }
             }
