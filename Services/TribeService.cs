@@ -388,7 +388,7 @@ namespace Megastonks.Services
         {
             //Notify all tribe members
             string tribeId = tribe.Id.ToString();
-            await _hubContext.Clients.Group(tribeId).SendAsync("UpdateTribes");
+            await _hubContext.Clients.Group(tribeId).SendAsync("TribeUpdated");
 
             //Add Message
             await _messageService.AddEventMessage(tribe, message);
