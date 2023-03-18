@@ -204,7 +204,7 @@ namespace Megastonks.Services
                 Body = message.Body,
                 Caption = message.Caption,
                 Type = message.Type.ToString(),
-                SenderWalletAddress = message.Sender.WalletAddress,
+                SenderWalletAddress = message.Sender == null ? "server" : message.Sender.WalletAddress,
                 Tag = message.Tag.ToString(),
                 Context = message.Context == null ? null : mapMessageToMessageResponse(message.Context),
                 Keys = message.Keys.Select(_mapper.Map<MessageKey, MessageKeyModel>).ToList(),
