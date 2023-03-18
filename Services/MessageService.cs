@@ -172,6 +172,29 @@ namespace Megastonks.Services
             }
         }
 
+        public async Task AddEventMessage(Tribe tribe, string eventTitle)
+        {
+            var eventMessage = new Message
+            {
+                Tribe = tribe,
+                Context = null,
+                Sender = null,
+                Body = eventTitle,
+                Caption = null,
+                Type = MessageType.systemEvent,
+                Tag = MessageTag.chat,
+                Keys = new List<MessageKey>(),
+                Reactions = new List<MessageReaction>(),
+                Expires = null,
+                TimeStamp = DateTime.UtcNow
+            };
+
+            _context.Add(eventMessage);
+            _context.SaveChanges();
+
+            await notifyTribe(tribe, eventMessage);
+        }
+
         private MessageResponse mapMessageToMessageResponse(Message message)
         {
             return new MessageResponse
