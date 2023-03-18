@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using Megastonks.Entities;
 using Megastonks.Helpers;
+using Megastonks.Hubs;
 using Megastonks.Models;
+using Megastonks.Models.Message;
 using Megastonks.Models.Tribe;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Megastonks.Services
@@ -23,11 +26,15 @@ namespace Megastonks.Services
         private readonly int tribeMembersLimit = 10;
         private readonly int tribeNameLimit = 24;
         private readonly ILogger<TribeService> _logger;
+        private readonly IHubContext<AppHub> _hubContext;
+        private readonly IMessageService _messageService;
         private readonly DataContext _context;
 
-        public TribeService(ILogger<TribeService> logger, DataContext context)
+        public TribeService(ILogger<TribeService> logger, IHubContext<AppHub> hubContext, IMessageService messageService, DataContext context)
         {
             _logger = logger;
+            _hubContext = hubContext;
+            _messageService = messageService;
             _context = context;
         }
 
@@ -366,6 +373,16 @@ namespace Megastonks.Services
             }
 
             return name.Trim();
+        }
+
+        private async Task notifyAndAddEvent(Tribe tribe, string message)
+        {
+            //Notify all tribe members
+            string tribeId = tribe.Id.ToString();
+            await _hubContext.Clients.Group(tribeId).SendAsync("UpdateTribes");
+
+            //Add Message
+            await _messageService.AddEventMessage(tribe, message);
         }
     }
 }

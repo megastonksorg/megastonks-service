@@ -15,6 +15,7 @@ namespace Megastonks.Services
         List<MessageResponse> GetMessages(Account account, string tribeId);
         SuccessResponse DeleteMessage(Account account, string messageId);
         Task PostMessage(Account account, PostMessageRequest model);
+        Task AddEventMessage(Tribe tribe, string eventTitle);
     }
 
     public class MessageService : IMessageService
