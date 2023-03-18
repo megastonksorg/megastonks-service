@@ -1,7 +1,6 @@
 ﻿using System;
 using AutoMapper;
 using Megastonks.Entities;
-using Megastonks.Entities.Message;
 using Megastonks.Helpers;
 using Megastonks.Hubs;
 using Megastonks.Models;
@@ -21,16 +20,16 @@ namespace Megastonks.Services
     public class MessageService : IMessageService
     {
         private readonly ILogger<MessageService> _logger;
-        private readonly DataContext _context;
         private readonly IHubContext<AppHub> _hubContext;
         private readonly IMapper _mapper;
+        private readonly DataContext _context;
 
-        public MessageService(ILogger<MessageService> logger, DataContext context, IHubContext<AppHub> hubContext, IMapper mapper)
+        public MessageService(ILogger<MessageService> logger, IHubContext<AppHub> hubContext, IMapper mapper, DataContext context)
         {
             _logger = logger;
-            _context = context;
             _hubContext = hubContext;
             _mapper = mapper;
+            _context = context;
         }
 
         public List<MessageResponse> GetMessages(Account account, string tribeId)
@@ -164,10 +163,7 @@ namespace Megastonks.Services
                 _context.Add(newMessage);
                 _context.SaveChanges();
 
-                //Notify all tribe members
-                string tribeId = tribe.Id.ToString();
-                MessageResponse messageToSend = mapMessageToMessageResponse(newMessage);
-                await _hubContext.Clients.Group(tribeId).SendAsync("ReceiveMessage", tribeId, messageToSend);
+                await notifyTribe(tribe, newMessage);
             }
             catch (Exception e)
             {
@@ -192,6 +188,14 @@ namespace Megastonks.Services
                 Expires = message.Expires,
                 TimeStamp = message.TimeStamp
             };
+        }
+
+        private async Task notifyTribe(Tribe tribe, Message message)
+        {
+            //Notify all tribe members
+            string tribeId = tribe.Id.ToString();
+            MessageResponse messageToSend = mapMessageToMessageResponse(message);
+            await _hubContext.Clients.Group(tribeId).SendAsync("ReceiveMessage", tribeId, messageToSend);
         }
     }
 }
