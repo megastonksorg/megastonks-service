@@ -41,23 +41,23 @@ namespace Megastonks.Controllers
         }
 
         [HttpPost("join")]
-        public ActionResult<TribeResponse> JoinTribe(string pin, string code)
+        public async Task<ActionResult<TribeResponse>> JoinTribe(string pin, string code)
         {
-            var result = _tribeService.JoinTribe(Account, pin, code).Result;
+            var result = await _tribeService.JoinTribe(Account, pin, code);
             return Ok(result);
         }
 
         [HttpPost("leave")]
-        public ActionResult<SuccessResponse> LeaveTribe(string id)
+        public async Task<ActionResult<SuccessResponse>> LeaveTribe(string id)
         {
-            var result = _tribeService.LeaveTribe(Account, id).Result;
+            var result = await _tribeService.LeaveTribe(Account, id);
             return Ok(result);
         }
 
         [HttpPatch("name")]
-        public ActionResult<string> UpdateTribeName(string id, string name)
+        public async Task<ActionResult<string>> UpdateTribeName(string id, string name)
         {
-            var result = _tribeService.UpdateTribeName(Account, id, name).Result;
+            var result = await _tribeService.UpdateTribeName(Account, id, name);
             return Ok(result);
         }
     }
