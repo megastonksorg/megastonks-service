@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Megastonks.Entities.Message
+namespace Megastonks.Entities
 {
     public class Message
     {

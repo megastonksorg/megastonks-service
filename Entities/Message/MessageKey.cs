@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 
-namespace Megastonks.Entities.Message
+namespace Megastonks.Entities
 {
     [Owned]
     public class MessageKey

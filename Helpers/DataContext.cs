@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Megastonks.Entities.Message;
 using Megastonks.Entities;
 using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 using System.Reflection.Emit;

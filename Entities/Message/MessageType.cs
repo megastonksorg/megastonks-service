@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Megastonks.Entities.Message
+namespace Megastonks.Entities
 {
     public enum MessageType
     {

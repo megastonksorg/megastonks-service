@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Megastonks.Entities;
-using Megastonks.Entities.Message;
 using Megastonks.Models.Account;
 using Megastonks.Models.Message;
 
