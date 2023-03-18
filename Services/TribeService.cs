@@ -15,9 +15,9 @@ namespace Megastonks.Services
         TribeResponse CreateTribe(Account account, string name);
         List<TribeResponse> GetTribes(Account account);
         SuccessResponse InviteToTribe(Account account, string tribeId, string code);
-        TribeResponse JoinTribe(Account account, string pin, string code);
-        SuccessResponse LeaveTribe(Account account, string tribeId);
-        string UpdateTribeName(Account account, string tribeId, string name);
+        Task<TribeResponse> JoinTribe(Account account, string pin, string code);
+        Task<SuccessResponse> LeaveTribe(Account account, string tribeId);
+        Task<string> UpdateTribeName(Account account, string tribeId, string name);
     }
 
     public class TribeService : ITribeService
@@ -175,7 +175,7 @@ namespace Megastonks.Services
             }
         }
 
-        public TribeResponse JoinTribe(Account account, string pin, string code)
+        public async Task<TribeResponse> JoinTribe(Account account, string pin, string code)
         {
             try
             {
@@ -246,6 +246,9 @@ namespace Megastonks.Services
 
                 var tribeMembers = mapTribeMembersForResponse(tribe.TribeMembers);
 
+                //Notify the Tribe then add an event message
+                await notifyAndAddEvent(tribe, $"{account.FullName} joined the Tribe");
+
                 return new TribeResponse
                 {
                     Id = tribe.Id.ToString(),
@@ -261,7 +264,7 @@ namespace Megastonks.Services
             }
         }
 
-        public SuccessResponse LeaveTribe(Account account, string tribeId)
+        public async Task<SuccessResponse> LeaveTribe(Account account, string tribeId)
         {
             try
             {
@@ -285,6 +288,9 @@ namespace Megastonks.Services
                     _context.Update(tribeToLeave);
                     _context.SaveChanges();
 
+                    //Notify the Tribe then add an event message
+                    await notifyAndAddEvent(tribeToLeave, $"{member.Account.FullName} left the Tribe");
+
                     return new SuccessResponse
                     {
                         Success = true
@@ -302,7 +308,7 @@ namespace Megastonks.Services
             }
         }
 
-        public string UpdateTribeName(Account account, string tribeId, string name)
+        public async Task<string> UpdateTribeName(Account account, string tribeId, string name)
         {
             try
             {
@@ -326,6 +332,9 @@ namespace Megastonks.Services
 
                     _context.Update(tribeToUpdate);
                     _context.SaveChanges();
+
+                    //Notify the Tribe then add an event message
+                    await notifyAndAddEvent(tribeToUpdate, $"{member.Account.FullName} updated the Tribe name to {validatedName}");
 
                     return validatedName;
                 }
