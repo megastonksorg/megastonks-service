@@ -29,10 +29,10 @@ namespace Megastonks.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> PostMessage([FromBody] PostMessageRequest model)
+        public async Task<ActionResult<EmptyResponse>> PostMessage([FromBody] PostMessageRequest model)
         {
             await _messageService.PostMessage(Account, model);
-            return Ok();
+            return Ok(new EmptyResponse());
         }
 
         [HttpDelete]
