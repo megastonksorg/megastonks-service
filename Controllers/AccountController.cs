@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Megastonks.Entities;
 using Megastonks.Services;
 using Megastonks.Models.Account;
 using Megastonks.Models;
@@ -59,6 +60,14 @@ namespace Megastonks.Controllers
         public ActionResult<Uri> UpdateProfilePhoto(string photoUrl)
         {
             var response = _accountService.UpdateProfilePhoto(Account, photoUrl);
+            return Ok(response);
+        }
+
+        [Authorize]
+        [HttpPost("updateAppleDeviceToken")]
+        public ActionResult<EmptyResponse> UpdateAppleDeviceToken(string deviceToken)
+        {
+            var response = _accountService.UpdateDeviceToken(Account, DeviceType.apple, deviceToken);
             return Ok(response);
         }
 

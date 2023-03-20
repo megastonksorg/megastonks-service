@@ -20,6 +20,7 @@ namespace Megastonks.Services
         SuccessResponse DoesAccountExist(string walletAddress);
         string UpdateName(Account account, string fullName);
         Uri UpdateProfilePhoto(Account account, string photoUrl);
+        EmptyResponse UpdateDeviceToken(Account account, DeviceType deviceType, string deviceToken);
     }
 
     public class AccountService : IAccountService
@@ -260,6 +261,32 @@ namespace Megastonks.Services
                 return profilePhotoUrl;
             }
             catch (Exception e)
+            {
+                _logger.LogError(e.StackTrace);
+                throw new AppException(e.Message);
+            }
+        }
+
+        public EmptyResponse UpdateDeviceToken(Account account, DeviceType deviceType, string deviceToken)
+        {
+            try
+            {
+                var user = _context.Accounts.Find(account.Id);
+
+                if (user == null)
+                {
+                    throw new AppException("Account not found");
+                }
+
+                user.DeviceType = DeviceType.apple;
+                user.DeviceToken = deviceToken;
+
+                _context.Update(user);
+                _context.SaveChanges();
+
+                return new EmptyResponse();
+            }
+            catch(Exception e)
             {
                 _logger.LogError(e.StackTrace);
                 throw new AppException(e.Message);
