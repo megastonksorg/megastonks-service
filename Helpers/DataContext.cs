@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Megastonks.Entities;
-using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
-using System.Reflection.Emit;
 
 namespace Megastonks.Helpers
 {
@@ -34,6 +32,14 @@ namespace Megastonks.Helpers
             builder.Entity<Account>()
                 .HasIndex(x => new { x.PublicKey })
                 .IsUnique();
+
+            builder.Entity<Account>()
+              .Property(x => x.DeviceType)
+              .HasConversion<string>();
+
+            builder.Entity<Account>()
+              .Property(x => x.Role)
+              .HasConversion<string>();
 
             builder.Entity<TribeInviteCode>()
                 .HasIndex(inviteCode => inviteCode.Code)
