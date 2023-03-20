@@ -175,7 +175,7 @@ namespace Megastonks.Services
 
                 //Send Push Notifications
                 string notificationBody = newMessage.Tag == MessageTag.tea ? "Hot ☕️" : $"Message from {account.FullName}";
-                _pushNotitificationService.SendPushToTribe(account, tribe, notificationBody);
+                _pushNotitificationService.SendPushToTribe(account, tribe, messageTag, notificationBody);
             }
             catch (Exception e)
             {

@@ -9,7 +9,7 @@ namespace Megastonks.Services
 {
     public interface IPushNotificationService
     {
-        void SendPushToTribe(Account? userToExclude, Tribe tribe, string body);
+        void SendPushToTribe(Account? userToExclude, Tribe tribe, MessageTag messageTag, string body);
     }
 
     public class PushNotificationService : IPushNotificationService
@@ -23,7 +23,15 @@ namespace Megastonks.Services
                     public string Title { get; set; }
                     public string Body { get; set; }
                 }
+
+                public class AlertData
+                {
+                    public string TribeId { get; set; }
+                    public MessageTag MessageTag { get; set; }
+                }
+
                 public AlertBody Alert { get; set; }
+                public AlertData Data { get; set; }
             }
 
             public ApsPayload Aps { get; set; }
@@ -40,8 +48,14 @@ namespace Megastonks.Services
             _logger = logger;
         }
 
-        public void SendPushToTribe(Account? userToExclude, Tribe tribe, string body)
+        public void SendPushToTribe(Account? userToExclude, Tribe tribe, MessageTag messageTag, string body)
         {
+            var data = new PushNotificationService.AppleNotification.ApsPayload.AlertData
+            {
+                TribeId = tribe.Id.ToString(),
+                MessageTag = messageTag
+            };
+
             if (userToExclude != null)
             {
                 tribe.TribeMembers.RemoveAll(x => x.Account == userToExclude);
@@ -49,11 +63,11 @@ namespace Megastonks.Services
 
             foreach (var member in tribe.TribeMembers)
             {
-                SendPush(member.Account, tribe.Name, body);
+                SendPush(member.Account, tribe.Name, body, data);
             }
         }
 
-        private async void SendPush(Account account, string title, string body)
+        private async void SendPush(Account account, string title, string body, PushNotificationService.AppleNotification.ApsPayload.AlertData data)
         {
             try
             {
@@ -73,7 +87,8 @@ namespace Megastonks.Services
                                     {
                                         Title = title,
                                         Body = body
-                                    }
+                                    },
+                                    Data = data
                                 }
                             };
 

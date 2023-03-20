@@ -253,7 +253,7 @@ namespace Megastonks.Services
 
                 //Send Push Notifications
                 string notificationBody = $"{account.FullName} joined";
-                _pushNotitificationService.SendPushToTribe(account, tribe, notificationBody);
+                _pushNotitificationService.SendPushToTribe(account, tribe, MessageTag.chat, notificationBody);
 
                 return new TribeResponse
                 {
