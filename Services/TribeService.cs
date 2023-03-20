@@ -248,8 +248,19 @@ namespace Megastonks.Services
 
                 var tribeMembers = mapTribeMembersForResponse(tribe.TribeMembers);
 
-                //Notify the Tribe then add an event message
-                await notifyAndAddEvent(tribe, $"{account.FullName} joined the Tribe");
+                //Send to the Tribe in Hub then add an event message
+                await sendTohubAndAddEvent(tribe, $"{account.FullName} joined the Tribe");
+
+                //Send Push Notifications
+                string notificationBody = $"{account.FullName} joined {tribe.Name}";
+
+                foreach (var member in tribe.TribeMembers)
+                {
+                    if (member.Account != account)
+                    {
+                        _pushNotitificationService.SendPush(member.Account, notificationBody);
+                    }
+                }
 
                 return new TribeResponse
                 {
@@ -291,7 +302,7 @@ namespace Megastonks.Services
                     _context.SaveChanges();
 
                     //Notify the Tribe then add an event message
-                    await notifyAndAddEvent(tribeToLeave, $"{member.Account.FullName} left the Tribe");
+                    await sendTohubAndAddEvent(tribeToLeave, $"{member.Account.FullName} left the Tribe");
 
                     return new SuccessResponse
                     {
@@ -336,7 +347,7 @@ namespace Megastonks.Services
                     _context.SaveChanges();
 
                     //Notify the Tribe then add an event message
-                    await notifyAndAddEvent(tribeToUpdate, $"{member.Account.FullName} updated the Tribe name to {validatedName}");
+                    await sendTohubAndAddEvent(tribeToUpdate, $"{member.Account.FullName} updated the Tribe name to {validatedName}");
 
                     return validatedName;
                 }
@@ -386,13 +397,13 @@ namespace Megastonks.Services
             return name.Trim();
         }
 
-        private async Task notifyAndAddEvent(Tribe tribe, string message)
+        private async Task sendTohubAndAddEvent(Tribe tribe, string message)
         {
-            //Notify all tribe members
+            //Send to all tribe members
             string tribeId = tribe.Id.ToString();
             await _hubContext.Clients.Group(tribeId).SendAsync("TribeUpdated");
 
-            //Add Message
+            //Add Event Message
             await _messageService.AddEventMessage(tribe, message);
         }
     }

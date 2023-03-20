@@ -164,7 +164,7 @@ namespace Megastonks.Services
                 _context.Add(newMessage);
                 _context.SaveChanges();
 
-                await notifyTribe(tribe, newMessage);
+                await sentToHub(tribe, newMessage);
             }
             catch (Exception e)
             {
@@ -193,7 +193,7 @@ namespace Megastonks.Services
             _context.Add(eventMessage);
             _context.SaveChanges();
 
-            await notifyTribe(tribe, eventMessage);
+            await sentToHub(tribe, eventMessage);
         }
 
         private MessageResponse mapMessageToMessageResponse(Message message)
@@ -214,9 +214,9 @@ namespace Megastonks.Services
             };
         }
 
-        private async Task notifyTribe(Tribe tribe, Message message)
+        private async Task sentToHub(Tribe tribe, Message message)
         {
-            //Notify all tribe members
+            //Send to all tribe members
             string tribeId = tribe.Id.ToString();
             MessageResponse messageToSend = mapMessageToMessageResponse(message);
             await _hubContext.Clients.Group(tribeId).SendAsync("ReceiveMessage", tribeId, messageToSend);
