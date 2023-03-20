@@ -23,13 +23,20 @@ namespace Megastonks.Services
         private readonly ILogger<MessageService> _logger;
         private readonly IHubContext<AppHub> _hubContext;
         private readonly IMapper _mapper;
+        private readonly IPushNotificationService _pushNotitificationService;
         private readonly DataContext _context;
 
-        public MessageService(ILogger<MessageService> logger, IHubContext<AppHub> hubContext, IMapper mapper, DataContext context)
+        public MessageService(
+            ILogger<MessageService> logger,
+            IHubContext<AppHub> hubContext,
+            IMapper mapper,
+            IPushNotificationService pushNotitificationService,
+            DataContext context)
         {
             _logger = logger;
             _hubContext = hubContext;
             _mapper = mapper;
+            _pushNotitificationService = pushNotitificationService;
             _context = context;
         }
 
@@ -165,6 +172,10 @@ namespace Megastonks.Services
                 _context.SaveChanges();
 
                 await sentToHub(tribe, newMessage);
+
+                //Send Push Notifications
+                string notificationBody = newMessage.Tag == MessageTag.tea ? "Hot ☕️" : $"Message from {account.FullName}";
+                _pushNotitificationService.SendPushToTribe(account, tribe, notificationBody);
             }
             catch (Exception e)
             {
