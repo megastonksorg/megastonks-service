@@ -1,4 +1,5 @@
-﻿using Megastonks.Helpers;
+﻿using CorePush.Apple;
+using Megastonks.Helpers;
 using Megastonks.Middleware;
 using Megastonks.Services;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,7 @@ builder.Services.AddScoped<IMediaUploadService, MediaUploadService>();
 builder.Services.AddScoped<ITribeService, TribeService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IPushNotificationService, PushNotificationService>();
+builder.Services.AddHttpClient<ApnSender>();
 
 builder.Services.AddSignalR();
 
