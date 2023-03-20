@@ -2,6 +2,7 @@
 
 namespace Megastonks.Entities
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum Role
     {
         Admin,
