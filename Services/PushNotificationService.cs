@@ -9,7 +9,7 @@ namespace Megastonks.Services
 {
     public interface IPushNotificationService
     {
-        void SendPush(Account account, string body);
+        void SendPush(Account account, string title, string body);
     }
 
     public class PushNotificationService : IPushNotificationService
@@ -18,15 +18,14 @@ namespace Megastonks.Services
         {
             public class ApsPayload
             {
-                [JsonProperty("alert")]
-                public string AlertBody { get; set; }
-
-                [JsonProperty("sound")]
-                public string Sound { get; set; }
+                public class AlertBody
+                {
+                    public string Title { get; set; }
+                    public string Body { get; set; }
+                }
+                public AlertBody Alert { get; set; }
             }
 
-            //Custom properties as needed
-            [JsonProperty("aps")]
             public ApsPayload Aps { get; set; }
         }
 
@@ -41,7 +40,7 @@ namespace Megastonks.Services
             _logger = logger;
         }
 
-        public async void SendPush(Account account, string body)
+        public async void SendPush(Account account, string title, string body)
         {
             try
             {
@@ -57,8 +56,11 @@ namespace Megastonks.Services
                             {
                                 Aps = new AppleNotification.ApsPayload
                                 {
-                                    AlertBody = body,
-                                    Sound = "default"
+                                    Alert = new AppleNotification.ApsPayload.AlertBody
+                                    {
+                                        Title = title,
+                                        Body = body
+                                    }
                                 }
                             };
 

@@ -252,13 +252,13 @@ namespace Megastonks.Services
                 await sendTohubAndAddEvent(tribe, $"{account.FullName} joined the Tribe");
 
                 //Send Push Notifications
-                string notificationBody = $"{account.FullName} joined {tribe.Name}";
+                string notificationBody = $"{account.FullName} joined";
 
                 foreach (var member in tribe.TribeMembers)
                 {
                     if (member.Account != account)
                     {
-                        _pushNotitificationService.SendPush(member.Account, notificationBody);
+                        _pushNotitificationService.SendPush(member.Account, tribe.Name, notificationBody);
                     }
                 }
 
