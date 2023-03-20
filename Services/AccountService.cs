@@ -112,7 +112,7 @@ namespace Megastonks.Services
                     // first registered account is an admin
                     var isFirstAccount = _context.Accounts.Count() == 0;
                     account.Currency = "USD";
-                    account.Role = isFirstAccount ? Role.Admin : Role.User;
+                    account.Role = isFirstAccount ? Role.admin : Role.user;
                     account.Created = DateTime.UtcNow;
                     account.FullName.Trim();
                     // save account
