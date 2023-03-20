@@ -22,7 +22,6 @@ namespace Megastonks.Controllers
         {
             var refreshToken = Request.Cookies["refreshToken"];
             var response = _accountService.RefreshToken(refreshToken, ipAddress());
-            setTokenCookie(response.RefreshToken);
             return Ok(response);
         }
 
@@ -61,16 +60,6 @@ namespace Megastonks.Controllers
         {
             var response = _accountService.UpdateProfilePhoto(Account, photoUrl);
             return Ok(response);
-        }
-
-        private void setTokenCookie(string token)
-        {
-            var cookieOptions = new CookieOptions
-            {
-                HttpOnly = true,
-                Expires = DateTime.UtcNow.AddDays(4)
-            };
-            Response.Cookies.Append("refreshToken", token, cookieOptions);
         }
 
         private string ipAddress()
