@@ -31,6 +31,7 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IMediaUploadService, MediaUploadService>();
 builder.Services.AddScoped<ITribeService, TribeService>();
 builder.Services.AddScoped<IMessageService, MessageService>();
+builder.Services.AddScoped<IPushNotificationService, PushNotificationService>();
 
 builder.Services.AddSignalR();
 

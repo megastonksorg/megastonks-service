@@ -28,13 +28,15 @@ namespace Megastonks.Services
         private readonly ILogger<TribeService> _logger;
         private readonly IHubContext<AppHub> _hubContext;
         private readonly IMessageService _messageService;
+        private readonly IPushNotificationService _pushNotitificationService;
         private readonly DataContext _context;
 
-        public TribeService(ILogger<TribeService> logger, IHubContext<AppHub> hubContext, IMessageService messageService, DataContext context)
+        public TribeService(ILogger<TribeService> logger, IHubContext<AppHub> hubContext, IMessageService messageService, IPushNotificationService pushNotitificationService, DataContext context)
         {
             _logger = logger;
             _hubContext = hubContext;
             _messageService = messageService;
+            _pushNotitificationService = pushNotitificationService;
             _context = context;
         }
 
