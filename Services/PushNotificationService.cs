@@ -9,7 +9,7 @@ namespace Megastonks.Services
 {
     public interface IPushNotificationService
     {
-        void SendPush(Account account, string title, string body);
+        void SendPushToTribe(Account? userToExclude, Tribe tribe, string body);
     }
 
     public class PushNotificationService : IPushNotificationService
@@ -40,7 +40,20 @@ namespace Megastonks.Services
             _logger = logger;
         }
 
-        public async void SendPush(Account account, string title, string body)
+        public void SendPushToTribe(Account? userToExclude, Tribe tribe, string body)
+        {
+            if (userToExclude != null)
+            {
+                tribe.TribeMembers.RemoveAll(x => x.Account == userToExclude);
+            }
+
+            foreach (var member in tribe.TribeMembers)
+            {
+                SendPush(member.Account, tribe.Name, body);
+            }
+        }
+
+        private async void SendPush(Account account, string title, string body)
         {
             try
             {

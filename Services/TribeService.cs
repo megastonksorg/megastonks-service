@@ -253,14 +253,7 @@ namespace Megastonks.Services
 
                 //Send Push Notifications
                 string notificationBody = $"{account.FullName} joined";
-
-                foreach (var member in tribe.TribeMembers)
-                {
-                    if (member.Account != account)
-                    {
-                        _pushNotitificationService.SendPush(member.Account, tribe.Name, notificationBody);
-                    }
-                }
+                _pushNotitificationService.SendPushToTribe(account, tribe, notificationBody);
 
                 return new TribeResponse
                 {
