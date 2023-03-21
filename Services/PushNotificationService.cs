@@ -16,6 +16,12 @@ namespace Megastonks.Services
     {
         public class AppleNotification
         {
+            public class PayloadData
+            {
+                public string TribeId { get; set; }
+                public MessageTag MessageTag { get; set; }
+            }
+
             public class ApsPayload
             {
                 public class AlertBody
@@ -24,17 +30,12 @@ namespace Megastonks.Services
                     public string Body { get; set; }
                 }
 
-                public class AlertData
-                {
-                    public string TribeId { get; set; }
-                    public MessageTag MessageTag { get; set; }
-                }
-
                 public AlertBody Alert { get; set; }
-                public AlertData Data { get; set; }
             }
 
             public ApsPayload Aps { get; set; }
+            public string TribeId { get; set; }
+            public MessageTag MessageTag { get; set; }
         }
 
         private readonly HttpClient _client;
@@ -50,7 +51,7 @@ namespace Megastonks.Services
 
         public void SendPushToTribe(Account? userToExclude, Tribe tribe, MessageTag messageTag, string body)
         {
-            var data = new PushNotificationService.AppleNotification.ApsPayload.AlertData
+            var data = new PushNotificationService.AppleNotification.PayloadData
             {
                 TribeId = tribe.Id.ToString(),
                 MessageTag = messageTag
@@ -67,7 +68,7 @@ namespace Megastonks.Services
             }
         }
 
-        private async void SendPush(Account account, string title, string body, PushNotificationService.AppleNotification.ApsPayload.AlertData data)
+        private async void SendPush(Account account, string title, string body, PushNotificationService.AppleNotification.PayloadData data)
         {
             try
             {
@@ -87,9 +88,10 @@ namespace Megastonks.Services
                                     {
                                         Title = title,
                                         Body = body
-                                    },
-                                    Data = data
-                                }
+                                    }
+                                },
+                                TribeId = data.TribeId,
+                                MessageTag = data.MessageTag
                             };
 
                             var settings = new ApnSettings
