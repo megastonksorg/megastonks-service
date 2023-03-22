@@ -56,6 +56,7 @@ namespace Megastonks.Services
                 }
 
                 var messages = _context.Message
+                    .Include(x => x.Sender)
                     .Where(x => x.Tribe == tribe && !x.Deleted && x.TimeStamp > DateTime.UtcNow.AddHours(-messageExpiryInHours))
                     .ToList();
 
