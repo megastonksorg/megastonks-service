@@ -38,8 +38,8 @@ namespace Megastonks.Controllers
             return Ok(response);
         }
 
+        [DisableRequestSizeLimit]
         [HttpPut("video")]
-        [RequestSizeLimit(bytes: 150_000_000)] //150MB
         public ActionResult<Uri> Video([FromBody] byte[] videoData)
         {
             var response = _mediaUploadService.UploadVideo(videoData);
