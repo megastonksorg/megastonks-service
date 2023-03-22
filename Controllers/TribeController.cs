@@ -54,6 +54,13 @@ namespace Megastonks.Controllers
             return Ok(result);
         }
 
+        [HttpPost("remove")]
+        public async Task<ActionResult<SuccessResponse>> RemoveFromTribe(string id, string memberId)
+        {
+            var result = await _tribeService.RemoveFromTribe(Account, id, memberId);
+            return Ok(result);
+        }
+
         [HttpPatch("name")]
         public async Task<ActionResult<string>> UpdateTribeName(string id, string name)
         {

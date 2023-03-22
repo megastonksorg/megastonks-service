@@ -17,6 +17,7 @@ namespace Megastonks.Services
         SuccessResponse InviteToTribe(Account account, string tribeId, string code);
         Task<TribeResponse> JoinTribe(Account account, string pin, string code);
         Task<SuccessResponse> LeaveTribe(Account account, string tribeId);
+        Task<SuccessResponse> RemoveFromTribe(Account account, string tribeId, string memberId);
         Task<string> UpdateTribeName(Account account, string tribeId, string name);
     }
 
@@ -296,6 +297,52 @@ namespace Megastonks.Services
 
                     //Notify the Tribe then add an event message
                     await sendTohubAndAddEvent(tribeToLeave, $"{member.Account.FullName} left the Tribe");
+
+                    return new SuccessResponse
+                    {
+                        Success = true
+                    };
+                }
+                else
+                {
+                    throw new AppException("Could not find tribe");
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.StackTrace);
+                throw new AppException(e.Message);
+            }
+        }
+
+        public async Task<SuccessResponse> RemoveFromTribe(Account account, string tribeId, string memberId)
+        {
+            try
+            {
+                if (tribeId == null || memberId == null)
+                {
+                    throw new AppException("Invalid TribeId or MemberId");
+                }
+
+                var tribe = _context.Tribes.Find(Guid.Parse(tribeId));
+                if (tribe != null)
+                {
+                    var currentTribeMember = tribe.TribeMembers.Where(x => x.Account == account).FirstOrDefault();
+                    var tribeMemberToRemove = tribe.TribeMembers.Where(x => x.Account.WalletAddress == memberId).FirstOrDefault();
+
+                    if (currentTribeMember == null || tribeMemberToRemove == null)
+                    {
+                        throw new AppException("You both have to be a member of the tribe to remove them");
+                    }
+
+                    tribe.TimestampId = Guid.NewGuid();
+                    tribe.TribeMembers.Remove(tribeMemberToRemove);
+
+                    _context.Update(tribe);
+                    _context.SaveChanges();
+
+                    //Notify the Tribe then add an event message
+                    await sendTohubAndAddEvent(tribe, $"{currentTribeMember.Account.FullName} removed {tribeMemberToRemove.Account.FullName} from the Tribe");
 
                     return new SuccessResponse
                     {
