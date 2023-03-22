@@ -47,6 +47,8 @@ namespace Megastonks.Services
             {
                 //Ensure the tribe id is valid and the user is a member of that tribe
                 var tribe = _context.Tribes
+                    .Include(x => x.TribeMembers)
+                    .ThenInclude(y => y.Account)
                     .Where(x => x.Id == Guid.Parse(tribeId) && x.TribeMembers.Any(y => y.Account == account))
                     .FirstOrDefault();
 
