@@ -190,6 +190,7 @@ namespace Megastonks.Services
                 string incomingInviteCodeHashed = EthereumSigner.HashMessage($"{pin}:{code}");
                 TribeInviteCode tribeInviteCode = _context.TribeInviteCodes
                     .Where(x => x.Code == incomingInviteCodeHashed)
+                    .Include(x => x.Account)
                     .Include(x => x.Tribe)
                     .FirstOrDefault();
 
@@ -250,7 +251,7 @@ namespace Megastonks.Services
                 var tribeMembers = mapTribeMembersForResponse(tribe.TribeMembers);
 
                 //Send to the Tribe in Hub then add an event message
-                await sendTohubAndAddEvent(tribe, $"{account.FullName} joined the Tribe");
+                await sendTohubAndAddEvent(tribe, $"{account.FullName} joined the Tribe by invitation from {tribeInviteCode.Account.FullName}");
 
                 //Send Push Notifications
                 string notificationBody = $"{account.FullName} joined";
