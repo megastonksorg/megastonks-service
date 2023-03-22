@@ -20,6 +20,7 @@ namespace Megastonks.Services
 
     public class MessageService : IMessageService
     {
+        private readonly int messageExpiryInHours = 24;
         private readonly ILogger<MessageService> _logger;
         private readonly IHubContext<AppHub> _hubContext;
         private readonly IMapper _mapper;
@@ -46,8 +47,6 @@ namespace Megastonks.Services
             {
                 //Ensure the tribe id is valid and the user is a member of that tribe
                 var tribe = _context.Tribes
-                    .Include(x => x.TribeMembers)
-                    .ThenInclude(y => y.Account)
                     .Where(x => x.Id == Guid.Parse(tribeId) && x.TribeMembers.Any(y => y.Account == account))
                     .FirstOrDefault();
 
@@ -57,7 +56,7 @@ namespace Megastonks.Services
                 }
 
                 var messages = _context.Message
-                    .Where(x => x.Tribe == tribe && !x.Deleted && x.TimeStamp > DateTime.UtcNow.AddHours(-24))
+                    .Where(x => x.Tribe == tribe && !x.Deleted && x.TimeStamp > DateTime.UtcNow.AddHours(-messageExpiryInHours))
                     .ToList();
 
                 List<MessageResponse> messagesResponse = new List<MessageResponse>();
@@ -150,7 +149,7 @@ namespace Megastonks.Services
                     Tag = messageTag,
                     Keys = new List<MessageKey>(),
                     Reactions = new List<MessageReaction>(),
-                    Expires = messageTag == MessageTag.tea ? DateTime.UtcNow.AddHours(24) : null,
+                    Expires = DateTime.UtcNow.AddHours(messageExpiryInHours),
                     TimeStamp = DateTime.UtcNow
                 };
 
