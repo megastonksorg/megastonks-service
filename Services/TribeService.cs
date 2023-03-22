@@ -335,6 +335,11 @@ namespace Megastonks.Services
                         throw new AppException("You both have to be a member of the tribe to remove them");
                     }
 
+                    if (currentTribeMember.Account.WalletAddress == tribeMemberToRemove.Account.WalletAddress)
+                    {
+                        throw new AppException("You cannot remove yourself from the Tribe. Please leave the Tribe instead");
+                    }
+
                     tribe.TimestampId = Guid.NewGuid();
                     tribe.TribeMembers.Remove(tribeMemberToRemove);
 
