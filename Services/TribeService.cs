@@ -324,18 +324,22 @@ namespace Megastonks.Services
                     throw new AppException("Invalid TribeId or MemberId");
                 }
 
-                var tribe = _context.Tribes.Find(Guid.Parse(tribeId));
+                var tribe = _context.Tribes
+                    .Include(x => x.TribeMembers)
+                    .ThenInclude(x => x.Account)
+                    .Where(x => x.Id == Guid.Parse(tribeId) && x.TribeMembers.Any(y => y.Account == account))
+                    .FirstOrDefault();
+
                 if (tribe != null)
                 {
-                    var currentTribeMember = tribe.TribeMembers.Where(x => x.Account == account).FirstOrDefault();
                     var tribeMemberToRemove = tribe.TribeMembers.Where(x => x.Account.WalletAddress == memberId).FirstOrDefault();
 
-                    if (currentTribeMember == null || tribeMemberToRemove == null)
+                    if (tribeMemberToRemove == null)
                     {
-                        throw new AppException("You both have to be a member of the tribe to remove them");
+                        throw new AppException("The user is not a member of this Tribe");
                     }
 
-                    if (currentTribeMember.Account.WalletAddress == tribeMemberToRemove.Account.WalletAddress)
+                    if (account.WalletAddress == tribeMemberToRemove.Account.WalletAddress)
                     {
                         throw new AppException("You cannot remove yourself from the Tribe. Please leave the Tribe instead");
                     }
@@ -347,7 +351,7 @@ namespace Megastonks.Services
                     _context.SaveChanges();
 
                     //Notify the Tribe then add an event message
-                    await sendTohubAndAddEvent(tribe, $"{currentTribeMember.Account.FullName} removed {tribeMemberToRemove.Account.FullName} from the Tribe");
+                    await sendTohubAndAddEvent(tribe, $"{account.FullName} removed {tribeMemberToRemove.Account.FullName} from the Tribe");
 
                     return new SuccessResponse
                     {
