@@ -85,6 +85,7 @@ namespace Megastonks.Services
             try
             {
                 var messageToDelete = _context.Message
+                    .Include(x => x.Tribe)
                     .Include(x => x.Sender)
                     .Where(x => x.Sender == account && x.Id == Guid.Parse(messageId))
                     .FirstOrDefault();
@@ -94,10 +95,12 @@ namespace Megastonks.Services
                     throw new AppException("Invalid Message Id");
                 }
 
-                var messages = messageToDelete.Deleted = true;
+                messageToDelete.Deleted = true;
 
                 _context.Update(messageToDelete);
                 _context.SaveChanges();
+
+                sendDeleteTohub(messageToDelete.Tribe, messageToDelete.Id);
 
                 return new SuccessResponse
                 {
@@ -358,6 +361,13 @@ namespace Megastonks.Services
             string tribeId = tribe.Id.ToString();
             MessageResponse messageToSend = mapMessageToMessageResponse(message);
             await _hubContext.Clients.Group(tribeId).SendAsync("ReceiveMessage", tribeId, messageToSend);
+        }
+
+        private async void sendDeleteTohub(Tribe tribe, Guid messageId)
+        {
+            //Send to all tribe members
+            string tribeId = tribe.Id.ToString();
+            await _hubContext.Clients.Group(tribeId).SendAsync("DeleteMessage", tribeId, messageId);
         }
     }
 }
