@@ -35,6 +35,13 @@ namespace Megastonks.Controllers
             return Ok(new EmptyResponse());
         }
 
+        [HttpGet]
+        public ActionResult<List<string>> GetViewers(string messageId)
+        {
+            var result = _messageService.GetViewers(Account, messageId);
+            return Ok(result);
+        }
+
         [HttpPost]
         public ActionResult<EmptyResponse> MarkAsViewed(string messageId)
         {
