@@ -302,7 +302,9 @@ namespace Megastonks.Services
             try
             {
                 var allowedTribeIds = new List<Guid>();
-                var tribes = _context.Tribes.AsNoTracking().Where(x => x.TribeMembers.Any(y => y.Account == account));
+                var tribes = _context.Tribes.AsNoTracking()
+                    .Where(x => x.TribeMembers.Any(y => y.Account == account))
+                    .ToList();
 
                 if (tribes.Count() == 0)
                 {
@@ -315,6 +317,7 @@ namespace Megastonks.Services
                         var teaCount = _context.Message
                             .AsNoTracking()
                             .Where(x => x.Tribe == tribe && !x.Deleted && x.Tag == MessageTag.tea && x.TimeStamp > DateTime.UtcNow.AddHours(-messageExpiryInHours))
+                            .ToList()
                             .Count();
                         if (teaCount < 39) //Tea limit per day is 40 for each Tribe
                         {
