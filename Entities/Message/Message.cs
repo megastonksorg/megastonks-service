@@ -24,6 +24,7 @@ namespace Megastonks.Entities
 
         public List<MessageKey> Keys { get; set; }
         public List<MessageReaction> Reactions { get; set; }
+        public List<MessageViewer> Viewers { get; set; }
 
         public DateTime? Expires { get; set; }
         public DateTime TimeStamp { get; set; }

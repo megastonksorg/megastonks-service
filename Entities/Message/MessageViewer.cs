@@ -1,11 +1,12 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore;
 
 namespace Megastonks.Entities
 {
+    [Owned]
     public class MessageViewer
     {
-        public int Id { get; set; }
         public Message Message { get; set; }
-        public List<Account> Viewers { get; set; }
+        public Account Account { get; set; }
     }
 }
