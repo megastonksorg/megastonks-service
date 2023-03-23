@@ -119,6 +119,7 @@ namespace Megastonks.Services
                 var message = _context.Message
                     .AsNoTracking()
                     .Include(x => x.Viewers)
+                    .ThenInclude(x => x.Account)
                     .Where(x => x.Id == messageIdGuid)
                     .FirstOrDefault();
 
