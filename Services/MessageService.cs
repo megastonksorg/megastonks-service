@@ -261,7 +261,7 @@ namespace Megastonks.Services
                 _context.Add(newMessage);
                 _context.SaveChanges();
 
-                await sentToHub(tribe, newMessage);
+                await sendTohub(tribe, newMessage);
 
                 //Send Push Notifications
                 string notificationBody = newMessage.Tag == MessageTag.tea ? "Hot ☕️" : $"Message from {account.FullName}";
@@ -294,7 +294,7 @@ namespace Megastonks.Services
             _context.Add(eventMessage);
             _context.SaveChanges();
 
-            await sentToHub(tribe, eventMessage);
+            await sendTohub(tribe, eventMessage);
         }
 
         public List<Guid> GetAllowedTeaRecipients(Account account)
@@ -352,7 +352,7 @@ namespace Megastonks.Services
             };
         }
 
-        private async Task sentToHub(Tribe tribe, Message message)
+        private async Task sendTohub(Tribe tribe, Message message)
         {
             //Send to all tribe members
             string tribeId = tribe.Id.ToString();
