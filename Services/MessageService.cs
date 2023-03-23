@@ -75,7 +75,7 @@ namespace Megastonks.Services
             }
             catch (Exception e)
             {
-                _logger.LogError(e.StackTrace);
+                _logger.LogError($"{e.Message} \n {e.StackTrace}");
                 throw new AppException(e.Message);
             }
         }
@@ -106,7 +106,7 @@ namespace Megastonks.Services
             }
             catch (Exception e)
             {
-                _logger.LogError(e.StackTrace);
+                _logger.LogError($"{e.Message} \n {e.StackTrace}");
                 throw new AppException(e.Message);
             }
         }
@@ -132,7 +132,7 @@ namespace Megastonks.Services
             }
             catch (Exception e)
             {
-                _logger.LogError(e.StackTrace);
+                _logger.LogError($"{e.Message} \n {e.StackTrace}");
                 throw new AppException(e.Message);
             }
         }
@@ -190,7 +190,7 @@ namespace Megastonks.Services
             }
             catch (Exception e)
             {
-                _logger.LogError(e.StackTrace);
+                _logger.LogError($"{e.Message} \n {e.StackTrace}");
                 throw new AppException(e.Message);
             }
         }
@@ -269,7 +269,7 @@ namespace Megastonks.Services
             }
             catch (Exception e)
             {
-                _logger.LogError(e.StackTrace);
+                _logger.LogError($"{e.Message} \n {e.StackTrace}");
                 throw new AppException(e.Message);
             }
         }
@@ -329,7 +329,7 @@ namespace Megastonks.Services
             }
             catch (Exception e)
             {
-                _logger.LogError(e.StackTrace);
+                _logger.LogError($"{e.Message} \n {e.StackTrace}");
                 throw new AppException(e.Message);
             }
         }

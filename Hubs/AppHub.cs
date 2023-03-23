@@ -40,7 +40,7 @@ namespace Megastonks.Hubs
             catch(Exception e)
             {
                 _logger.LogError("Could not Join Group");
-                _logger.LogError(e.StackTrace);
+                _logger.LogError($"{e.Message} \n {e.StackTrace}");
             }
         }
 
