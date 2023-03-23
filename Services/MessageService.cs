@@ -116,18 +116,18 @@ namespace Megastonks.Services
             try
             {
                 Guid messageIdGuid = Guid.Parse(messageId);
-                var messageViewers = _context.MessageViewers
+                var message = _context.Message
                     .AsNoTracking()
                     .Include(x => x.Viewers)
-                    .Where(x => x.Message.Id == messageIdGuid)
+                    .Where(x => x.Id == messageIdGuid)
                     .FirstOrDefault();
 
-                if (messageViewers == null)
+                if (message == null)
                 {
                     return new List<string>();
                 }
 
-                return messageViewers.Viewers.Select(x => x.WalletAddress).ToList();
+                return message.Viewers.Select(x => x.Account.WalletAddress).ToList();
             }
             catch (Exception e)
             {
@@ -141,41 +141,45 @@ namespace Megastonks.Services
             try
             {
                 Guid messageIdGuid = Guid.Parse(messageId);
-                var messageViewed = _context.Message
+                var message = _context.Message
+                    .Include(x => x.Viewers)
                     .Where(x => x.Id == messageIdGuid)
                     .FirstOrDefault();
 
-                if (messageViewed == null)
+                if (message == null)
                 {
                     throw new AppException("Invalid Message Id");
                 }
 
-                var messageViewer = _context.MessageViewers
-                    .Include(x => x.Viewers)
-                    .Where(x => x.Message.Id == messageIdGuid)
-                    .FirstOrDefault();
-
-                if (messageViewer == null)
+                if (message.Viewers == null)
                 {
-                    List<Account> newViewers = new List<Account>();
-                    newViewers.Add(account);
-                    var newMessageViewer = new MessageViewer
-                    {
-                        Message = messageViewed,
-                        Viewers = newViewers
-                    };
-                    _context.Add(newMessageViewer);
+                    List<MessageViewer> newViewers = new List<MessageViewer>();
+                    newViewers.Add(
+                            new MessageViewer
+                            {
+                                Account = account,
+                                Message = message
+                            }
+                        );
+                    message.Viewers = newViewers;
+                    _context.Update(message);
                 }
                 else
                 {
-                    if (messageViewer.Viewers.Any(x => x == account))
+                    if (message.Viewers.Any(x => x.Account == account))
                     {
                         return new EmptyResponse();
                     }
                     else
                     {
-                        messageViewer.Viewers.Add(account);
-                        _context.Update(messageViewer);
+                        message.Viewers.Add(
+                                new MessageViewer
+                                {
+                                    Account = account,
+                                    Message = message
+                                }
+                            );
+                        _context.Update(message);
                     }
                 }
 
