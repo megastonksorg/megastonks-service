@@ -18,6 +18,7 @@ namespace Megastonks.Services
         EmptyResponse MarkAsViewed(Account account, string messageId);
         Task PostMessage(Account account, PostMessageRequest model);
         Task AddEventMessage(Tribe tribe, string eventTitle);
+        List<Guid> GetAllowedTeaRecipients(Account account);
     }
 
     public class MessageService : IMessageService
@@ -295,6 +296,40 @@ namespace Megastonks.Services
             _context.SaveChanges();
 
             await sentToHub(tribe, eventMessage);
+        }
+
+        public List<Guid> GetAllowedTeaRecipients(Account account)
+        {
+            try
+            {
+                var allowedTribeIds = new List<Guid>();
+                var tribes = _context.Tribes.AsNoTracking().Where(x => x.TribeMembers.Any(y => y.Account == account));
+
+                if (tribes.Count() == 0)
+                {
+                    return allowedTribeIds;
+                }
+                else
+                {
+                    foreach(var tribe in tribes)
+                    {
+                        var teaCount = _context.Message
+                            .AsNoTracking()
+                            .Where(x => x.Tribe == tribe && !x.Deleted && x.Tag == MessageTag.tea && x.TimeStamp > DateTime.UtcNow.AddHours(-messageExpiryInHours))
+                            .Count();
+                        if (teaCount < 39) //Tea limit per day is 40 for each Tribe
+                        {
+                            allowedTribeIds.Add(tribe.Id);
+                        }
+                    }
+                    return allowedTribeIds;
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.StackTrace);
+                throw new AppException(e.Message);
+            }
         }
 
         private MessageResponse mapMessageToMessageResponse(Message message)

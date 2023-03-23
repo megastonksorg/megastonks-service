@@ -49,6 +49,13 @@ namespace Megastonks.Controllers
             return Ok(result);
         }
 
+        [HttpGet("allowedTeaRecipients")]
+        public ActionResult<List<Guid>> GetAllowedTeaRecipients()
+        {
+            var result = _messageService.GetAllowedTeaRecipients(Account);
+            return Ok(result);
+        }
+
         [HttpDelete]
         public ActionResult<SuccessResponse> DeleteMessage(string messageId)
         {
