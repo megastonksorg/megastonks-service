@@ -16,8 +16,8 @@ namespace Megastonks.Services
         SuccessResponse DeleteMessage(Account account, string messageId);
         List<string> GetViewers(Account account, string messageId);
         EmptyResponse MarkAsViewed(Account account, string messageId);
-        Task PostMessage(Account account, PostMessageRequest model);
-        Task AddEventMessage(Tribe tribe, string eventTitle);
+        EmptyResponse PostMessage(Account account, PostMessageRequest model);
+        void AddEventMessage(Tribe tribe, string eventTitle);
         List<Guid> GetAllowedTeaRecipients(Account account);
     }
 
@@ -198,7 +198,7 @@ namespace Megastonks.Services
             }
         }
 
-        public async Task PostMessage(Account account, PostMessageRequest model)
+        public EmptyResponse PostMessage(Account account, PostMessageRequest model)
         {
             try
             {
@@ -264,11 +264,13 @@ namespace Megastonks.Services
                 _context.Add(newMessage);
                 _context.SaveChanges();
 
-                await sendTohub(tribe, newMessage);
+                sendTohub(tribe, newMessage);
 
                 //Send Push Notifications
                 string notificationBody = newMessage.Tag == MessageTag.tea ? "Hot ☕️" : $"Message from {account.FullName}";
                 _pushNotitificationService.SendPushToTribe(account, tribe, messageTag, notificationBody);
+
+                return new EmptyResponse();
             }
             catch (Exception e)
             {
@@ -277,27 +279,35 @@ namespace Megastonks.Services
             }
         }
 
-        public async Task AddEventMessage(Tribe tribe, string eventTitle)
+        public void AddEventMessage(Tribe tribe, string eventTitle)
         {
-            var eventMessage = new Message
+            try
             {
-                Tribe = tribe,
-                Context = null,
-                Sender = null,
-                Body = eventTitle,
-                Caption = null,
-                Type = MessageType.systemEvent,
-                Tag = MessageTag.chat,
-                Keys = new List<MessageKey>(),
-                Reactions = new List<MessageReaction>(),
-                Expires = null,
-                TimeStamp = DateTime.UtcNow
-            };
+                var eventMessage = new Message
+                {
+                    Tribe = tribe,
+                    Context = null,
+                    Sender = null,
+                    Body = eventTitle,
+                    Caption = null,
+                    Type = MessageType.systemEvent,
+                    Tag = MessageTag.chat,
+                    Keys = new List<MessageKey>(),
+                    Reactions = new List<MessageReaction>(),
+                    Expires = null,
+                    TimeStamp = DateTime.UtcNow
+                };
 
-            _context.Add(eventMessage);
-            _context.SaveChanges();
+                _context.Add(eventMessage);
+                _context.SaveChanges();
 
-            await sendTohub(tribe, eventMessage);
+                sendTohub(tribe, eventMessage);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"{e.Message} \n {e.StackTrace}");
+                throw new AppException(e.Message);
+            }
         }
 
         public List<Guid> GetAllowedTeaRecipients(Account account)
@@ -355,7 +365,7 @@ namespace Megastonks.Services
             };
         }
 
-        private async Task sendTohub(Tribe tribe, Message message)
+        private async void sendTohub(Tribe tribe, Message message)
         {
             //Send to all tribe members
             string tribeId = tribe.Id.ToString();
