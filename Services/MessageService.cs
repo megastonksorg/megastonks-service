@@ -14,6 +14,7 @@ namespace Megastonks.Services
     {
         List<MessageResponse> GetMessages(Account account, string tribeId);
         SuccessResponse DeleteMessage(Account account, string messageId);
+        EmptyResponse MarkAsViewed(Account account, string messageId);
         Task PostMessage(Account account, PostMessageRequest model);
         Task AddEventMessage(Tribe tribe, string eventTitle);
     }
@@ -101,6 +102,60 @@ namespace Megastonks.Services
                 {
                     Success = true
                 };
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.StackTrace);
+                throw new AppException(e.Message);
+            }
+        }
+
+        public EmptyResponse MarkAsViewed(Account account, string messageId)
+        {
+            try
+            {
+                Guid messageIdGuid = Guid.Parse(messageId);
+                var messageViewed = _context.Message
+                    .AsNoTracking()
+                    .Where(x => x.Id == messageIdGuid)
+                    .FirstOrDefault();
+
+                if (messageViewed == null)
+                {
+                    throw new AppException("Invalid Message Id");
+                }
+
+                var messageViewer = _context.MessageViewers
+                    .Include(x => x.Viewers)
+                    .Where(x => x.Message.Id == messageIdGuid)
+                    .FirstOrDefault();
+
+                if (messageViewer == null)
+                {
+                    List<Account> newViewers = new List<Account>();
+                    newViewers.Add(account);
+                    var newMessageViewer = new MessageViewer
+                    {
+                        Message = messageViewed,
+                        Viewers = newViewers
+                    };
+                    _context.Add(newMessageViewer);
+                }
+                else
+                {
+                    if (messageViewer.Viewers.Any(x => x == account))
+                    {
+                        return new EmptyResponse();
+                    }
+                    else
+                    {
+                        messageViewer.Viewers.Add(account);
+                    }
+                }
+
+                _context.SaveChanges();
+
+                return new EmptyResponse();
             }
             catch (Exception e)
             {
