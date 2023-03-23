@@ -98,6 +98,7 @@ namespace Megastonks.Services
             {
                 List<TribeResponse> tribesResponse = new List<TribeResponse>();
                 var tribes = _context.Tribes
+                    .AsNoTracking()
                     .Include(x => x.TribeMembers)
                     .ThenInclude(y => y.Account)
                     .Where(x => x.TribeMembers.Any(y => y.Account == account))

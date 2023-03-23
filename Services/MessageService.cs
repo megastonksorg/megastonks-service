@@ -47,6 +47,7 @@ namespace Megastonks.Services
             {
                 //Ensure the tribe id is valid and the user is a member of that tribe
                 var tribe = _context.Tribes
+                    .AsNoTracking()
                     .Include(x => x.TribeMembers)
                     .ThenInclude(y => y.Account)
                     .Where(x => x.Id == Guid.Parse(tribeId) && x.TribeMembers.Any(y => y.Account == account))
@@ -58,6 +59,7 @@ namespace Megastonks.Services
                 }
 
                 var messages = _context.Message
+                    .AsNoTracking()
                     .Include(x => x.Sender)
                     .Where(x => x.Tribe == tribe && !x.Deleted && x.TimeStamp > DateTime.UtcNow.AddHours(-messageExpiryInHours))
                     .ToList();
