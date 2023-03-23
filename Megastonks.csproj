@@ -48,7 +48,6 @@
     <None Remove="Microsoft.ApplicationInsights.AspNetCore" />
     <None Remove="Models\Tribe\" />
     <None Remove="Microsoft.AspNetCore.Authentication.JwtBearer" />
-    <None Remove="Migrations\" />
     <None Remove="Entities\Tribe\" />
     <None Remove="Entities\Account\" />
     <None Remove="Entities\Message\" />
@@ -63,7 +62,6 @@
     <Folder Include="Models\" />
     <Folder Include="Models\Account\" />
     <Folder Include="Models\Tribe\" />
-    <Folder Include="Migrations\" />
     <Folder Include="Entities\Tribe\" />
     <Folder Include="Entities\Account\" />
     <Folder Include="Entities\Message\" />
