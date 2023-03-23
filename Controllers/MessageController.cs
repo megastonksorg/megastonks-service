@@ -35,6 +35,13 @@ namespace Megastonks.Controllers
             return Ok(new EmptyResponse());
         }
 
+        [HttpPost]
+        public ActionResult<EmptyResponse> MarkAsViewed(string messageId)
+        {
+            var result = _messageService.MarkAsViewed(Account, messageId);
+            return Ok(result);
+        }
+
         [HttpDelete]
         public ActionResult<SuccessResponse> DeleteMessage(string messageId)
         {
