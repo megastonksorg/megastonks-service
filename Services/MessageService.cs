@@ -142,7 +142,6 @@ namespace Megastonks.Services
             {
                 Guid messageIdGuid = Guid.Parse(messageId);
                 var messageViewed = _context.Message
-                    .AsNoTracking()
                     .Where(x => x.Id == messageIdGuid)
                     .FirstOrDefault();
 
@@ -176,6 +175,7 @@ namespace Megastonks.Services
                     else
                     {
                         messageViewer.Viewers.Add(account);
+                        _context.Update(messageViewer);
                     }
                 }
 
