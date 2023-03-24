@@ -64,6 +64,7 @@ namespace Megastonks.Services
                 var messages = _context.Message
                     .AsNoTracking()
                     .Include(x => x.Sender)
+                    .Include(x => x.Context)
                     .Where(x => x.Tribe == tribe && !x.Deleted && x.TimeStamp > DateTime.UtcNow.AddHours(-messageExpiryInHours));
 
                 List<MessageResponse> messagesResponse = new List<MessageResponse>();
