@@ -31,6 +31,7 @@ namespace Megastonks.Services
                 }
 
                 public AlertBody Alert { get; set; }
+                public string Sound { get; set; }
             }
 
             public ApsPayload Aps { get; set; }
@@ -88,7 +89,8 @@ namespace Megastonks.Services
                                     {
                                         Title = title,
                                         Body = body
-                                    }
+                                    },
+                                    Sound = "pushNotification.mp3"
                                 },
                                 TribeId = data.TribeId,
                                 MessageTag = data.MessageTag
