@@ -24,6 +24,7 @@ namespace Megastonks.Services
     public class MessageService : IMessageService
     {
         private readonly int messageExpiryInHours = 24;
+        private readonly string serverSender = "server";
         private readonly ILogger<MessageService> _logger;
         private readonly IHubContext<AppHub> _hubContext;
         private readonly IMapper _mapper;
@@ -63,16 +64,21 @@ namespace Megastonks.Services
 
                 var messages = _context.Message
                     .AsNoTracking()
-                    .Include(x => x.Sender)
-                    .Include(x => x.Context)
-                    .Where(x => x.Tribe == tribe && !x.Deleted && x.TimeStamp > DateTime.UtcNow.AddHours(-messageExpiryInHours));
+                    .Where(x => x.Tribe == tribe && !x.Deleted && x.TimeStamp > DateTime.UtcNow.AddHours(-messageExpiryInHours))
+                    .Select(x => new MessageResponse {
+                        Id = x.Id,
+                        Body = x.Body,
+                        Caption = x.Caption,
+                        Type = x.Type,
+                        SenderWalletAddress = x.Sender == null ? serverSender : x.Sender.WalletAddress,
+                        Tag = x.Tag,
+                        Context = x.Context == null ? null : x.Context.Id,
+                        Keys = x.Keys.Where(y => y.PublicKey == account.PublicKey).ToList(),
+                        Expires = x.Expires,
+                        TimeStamp = x.TimeStamp
+                    }).ToList();
 
-                List<MessageResponse> messagesResponse = new List<MessageResponse>();
-                foreach (var message in messages)
-                {
-                    messagesResponse.Add(mapMessageToMessageResponse(message));
-                }
-                return messagesResponse;
+                return messages;
             }
             catch (Exception e)
             {
@@ -352,15 +358,14 @@ namespace Megastonks.Services
         {
             return new MessageResponse
             {
-                Id = message.Id.ToString(),
+                Id = message.Id,
                 Body = message.Body,
                 Caption = message.Caption,
                 Type = message.Type,
-                SenderWalletAddress = message.Sender == null ? "server" : message.Sender.WalletAddress,
+                SenderWalletAddress = message.Sender == null ? serverSender : message.Sender.WalletAddress,
                 Tag = message.Tag,
-                Context = message.Context == null ? null : mapMessageToMessageResponse(message.Context),
-                Keys = message.Keys.Select(_mapper.Map<MessageKey, MessageKeyModel>).ToList(),
-                Reactions = message.Reactions.Select(_mapper.Map<MessageReaction, MessageResponse.Reaction>).ToList(),
+                Context = message.Context == null ? null : message.Context.Id,
+                Keys = message.Keys,
                 Expires = message.Expires,
                 TimeStamp = message.TimeStamp
             };
