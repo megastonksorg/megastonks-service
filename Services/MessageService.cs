@@ -17,7 +17,7 @@ namespace Megastonks.Services
         List<string> GetViewers(Account account, string messageId);
         EmptyResponse MarkAsViewed(Account account, string messageId);
         EmptyResponse PostMessage(Account account, PostMessageRequest model);
-        void AddEventMessage(Tribe tribe, string eventTitle);
+        void AddEventMessage(Account account, Tribe tribe, string eventTitle);
         List<Guid> GetAllowedTeaRecipients(Account account);
     }
 
@@ -275,7 +275,7 @@ namespace Megastonks.Services
 
                 //Send Push Notifications
                 string notificationBody = newMessage.Tag == MessageTag.tea ? "Hot ☕️" : $"Message from {account.FullName}";
-                _pushNotitificationService.SendPushToTribe(account, tribe, messageTag, notificationBody);
+                _pushNotitificationService.SendPushToTribe(account, tribe, newMessage.Id, messageTag, notificationBody);
 
                 return new EmptyResponse();
             }
@@ -286,7 +286,7 @@ namespace Megastonks.Services
             }
         }
 
-        public void AddEventMessage(Tribe tribe, string eventTitle)
+        public void AddEventMessage(Account account, Tribe tribe, string eventTitle)
         {
             try
             {
@@ -309,6 +309,9 @@ namespace Megastonks.Services
                 _context.SaveChanges();
 
                 sendTohub(tribe, eventMessage);
+
+                //Send Push Notifications
+                _pushNotitificationService.SendPushToTribe(account, tribe, eventMessage.Id, eventMessage.Tag, eventTitle);
             }
             catch (Exception e)
             {

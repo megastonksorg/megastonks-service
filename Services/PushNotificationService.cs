@@ -9,7 +9,7 @@ namespace Megastonks.Services
 {
     public interface IPushNotificationService
     {
-        void SendPushToTribe(Account? userToExclude, Tribe tribe, MessageTag messageTag, string body);
+        void SendPushToTribe(Account? userToExclude, Tribe tribe, Guid messageId, MessageTag messageTag, string body);
     }
 
     public class PushNotificationService : IPushNotificationService
@@ -18,8 +18,9 @@ namespace Megastonks.Services
         {
             public class PayloadData
             {
-                public string TribeId { get; set; }
+                public Guid TribeId { get; set; }
                 public MessageTag MessageTag { get; set; }
+                public Guid MessageId { get; set; }
             }
 
             public class ApsPayload
@@ -35,8 +36,9 @@ namespace Megastonks.Services
             }
 
             public ApsPayload Aps { get; set; }
-            public string TribeId { get; set; }
+            public Guid TribeId { get; set; }
             public MessageTag MessageTag { get; set; }
+            public Guid MessageId { get; set; }
         }
 
         private readonly HttpClient _client;
@@ -50,12 +52,13 @@ namespace Megastonks.Services
             _logger = logger;
         }
 
-        public void SendPushToTribe(Account? userToExclude, Tribe tribe, MessageTag messageTag, string body)
+        public void SendPushToTribe(Account? userToExclude, Tribe tribe, Guid messageId, MessageTag messageTag, string body)
         {
             var data = new PushNotificationService.AppleNotification.PayloadData
             {
-                TribeId = tribe.Id.ToString(),
-                MessageTag = messageTag
+                TribeId = tribe.Id,
+                MessageTag = messageTag,
+                MessageId = messageId
             };
 
             if (userToExclude != null)
@@ -93,7 +96,8 @@ namespace Megastonks.Services
                                     Sound = "pushNotification.mp3"
                                 },
                                 TribeId = data.TribeId,
-                                MessageTag = data.MessageTag
+                                MessageTag = data.MessageTag,
+                                MessageId = data.MessageId
                             };
 
                             var settings = new ApnSettings

@@ -29,15 +29,13 @@ namespace Megastonks.Services
         private readonly ILogger<TribeService> _logger;
         private readonly IHubContext<AppHub> _hubContext;
         private readonly IMessageService _messageService;
-        private readonly IPushNotificationService _pushNotitificationService;
         private readonly DataContext _context;
 
-        public TribeService(ILogger<TribeService> logger, IHubContext<AppHub> hubContext, IMessageService messageService, IPushNotificationService pushNotitificationService, DataContext context)
+        public TribeService(ILogger<TribeService> logger, IHubContext<AppHub> hubContext, IMessageService messageService, DataContext context)
         {
             _logger = logger;
             _hubContext = hubContext;
             _messageService = messageService;
-            _pushNotitificationService = pushNotitificationService;
             _context = context;
         }
 
@@ -252,11 +250,7 @@ namespace Megastonks.Services
                 var tribeMembers = mapTribeMembersForResponse(tribe.TribeMembers);
 
                 //Send to the Tribe in Hub then add an event message
-                sendTohubAndAddEvent(tribe, $"{account.FullName} joined the Tribe by invitation from {tribeInviteCode.Account.FullName}");
-
-                //Send Push Notifications
-                string notificationBody = $"{account.FullName} joined";
-                _pushNotitificationService.SendPushToTribe(account, tribe, MessageTag.chat, notificationBody);
+                sendTohubAndAddEvent(account, tribe, $"{account.FullName} joined the Tribe by invitation from {tribeInviteCode.Account.FullName}");
 
                 return new TribeResponse
                 {
@@ -297,8 +291,8 @@ namespace Megastonks.Services
                     _context.Update(tribeToLeave);
                     _context.SaveChanges();
 
-                    //Notify the Tribe then add an event message
-                    sendTohubAndAddEvent(tribeToLeave, $"{member.Account.FullName} left the Tribe");
+                    //Send to the Tribe in Hub then add an event message
+                    sendTohubAndAddEvent(account, tribeToLeave, $"{member.Account.FullName} left the Tribe");
 
                     return new SuccessResponse
                     {
@@ -353,7 +347,7 @@ namespace Megastonks.Services
                     _context.SaveChanges();
 
                     //Notify the Tribe then add an event message
-                    sendTohubAndAddEvent(tribe, $"{account.FullName} removed {tribeMemberToRemove.Account.FullName} from the Tribe");
+                    sendTohubAndAddEvent(account, tribe, $"{account.FullName} removed {tribeMemberToRemove.Account.FullName} from the Tribe");
 
                     return new SuccessResponse
                     {
@@ -398,7 +392,7 @@ namespace Megastonks.Services
                     _context.SaveChanges();
 
                     //Notify the Tribe then add an event message
-                    sendTohubAndAddEvent(tribeToUpdate, $"{member.Account.FullName} updated the Tribe name to {validatedName}");
+                    sendTohubAndAddEvent(account, tribeToUpdate, $"{member.Account.FullName} updated the Tribe name to {validatedName}");
 
                     return validatedName;
                 }
@@ -448,14 +442,14 @@ namespace Megastonks.Services
             return name.Trim();
         }
 
-        private async void sendTohubAndAddEvent(Tribe tribe, string message)
+        private async void sendTohubAndAddEvent(Account account, Tribe tribe, string message)
         {
             //Send to all tribe members
             string tribeId = tribe.Id.ToString();
             await _hubContext.Clients.Group(tribeId).SendAsync("TribeUpdated");
 
             //Add Event Message
-            _messageService.AddEventMessage(tribe, message);
+            _messageService.AddEventMessage(account, tribe, message);
         }
     }
 }
