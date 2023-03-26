@@ -4,6 +4,7 @@ using Megastonks.Helpers;
 using Microsoft.Extensions.Options;
 using CorePush.Apple;
 using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Megastonks.Services
 {
@@ -33,6 +34,9 @@ namespace Megastonks.Services
 
                 public AlertBody Alert { get; set; }
                 public string Sound { get; set; }
+
+                [JsonPropertyName("mutable-content")]
+                public int MutableContent { get; set; }
             }
 
             public ApsPayload Aps { get; set; }
@@ -93,7 +97,8 @@ namespace Megastonks.Services
                                         Title = title,
                                         Body = body
                                     },
-                                    Sound = "pushNotification.mp3"
+                                    Sound = "pushNotification.mp3",
+                                    MutableContent = 1
                                 },
                                 TribeId = data.TribeId,
                                 MessageTag = data.MessageTag,
