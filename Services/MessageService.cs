@@ -62,7 +62,7 @@ namespace Megastonks.Services
                     throw new AppException("Invalid Tribe Id");
                 }
 
-                var messages = _context.Message
+                var messages = _context.Messages
                     .AsNoTracking()
                     .Where(x => x.Tribe == tribe && !x.Deleted && x.TimeStamp > DateTime.UtcNow.AddHours(-messageExpiryInHours))
                     .Select(x => new MessageResponse {
@@ -91,7 +91,7 @@ namespace Megastonks.Services
         {
             try
             {
-                var messageToDelete = _context.Message
+                var messageToDelete = _context.Messages
                     .Include(x => x.Tribe)
                     .Include(x => x.Sender)
                     .Where(x => x.Sender == account && x.Id == Guid.Parse(messageId))
@@ -126,7 +126,7 @@ namespace Megastonks.Services
             try
             {
                 Guid messageIdGuid = Guid.Parse(messageId);
-                var message = _context.Message
+                var message = _context.Messages
                     .AsNoTracking()
                     .Include(x => x.Viewers)
                     .ThenInclude(x => x.Account)
@@ -152,7 +152,7 @@ namespace Megastonks.Services
             try
             {
                 Guid messageIdGuid = Guid.Parse(messageId);
-                var message = _context.Message
+                var message = _context.Messages
                     .Include(x => x.Viewers)
                     .Where(x => x.Id == messageIdGuid)
                     .FirstOrDefault();
@@ -230,7 +230,7 @@ namespace Megastonks.Services
 
                 if (model.ContextId != null)
                 {
-                    contextMessage = _context.Message
+                    contextMessage = _context.Messages
                         .Include(x => x.Sender)
                         .Include(x => x.Keys)
                         .Where(y => y.Id == Guid.Parse(model.ContextId))
@@ -337,7 +337,7 @@ namespace Megastonks.Services
                 {
                     foreach(var tribe in tribes)
                     {
-                        var teaCount = _context.Message
+                        var teaCount = _context.Messages
                             .AsNoTracking()
                             .Where(x => x.Tribe == tribe && !x.Deleted && x.Tag == MessageTag.tea && x.TimeStamp > DateTime.UtcNow.AddHours(-messageExpiryInHours))
                             .ToList()

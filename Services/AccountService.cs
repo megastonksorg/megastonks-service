@@ -321,7 +321,7 @@ namespace Megastonks.Services
                     throw new AppException("Account not found");
                 }
 
-                var messages = _context.Message
+                var messages = _context.Messages
                     .Include(x => x.Sender)
                     .Where(x => x.Sender == account)
                     .ToArray();
@@ -346,7 +346,7 @@ namespace Megastonks.Services
                 //3. Delete all messages
                 foreach (var message in messages)
                 {
-                    var messageContext = _context.Message
+                    var messageContext = _context.Messages
                         .Include(x => x.Context)
                         .Where(x => x.Context.Id == message.Id)
                         .FirstOrDefault();
