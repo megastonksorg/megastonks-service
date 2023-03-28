@@ -302,6 +302,11 @@ namespace Megastonks.Services
         {
             try
             {
+                if (account == null)
+                {
+                    throw new AppException("Account not found");
+                }
+
                 /*
                 STEPS TO DELETE A USER
                     1. Remove from Tribe
