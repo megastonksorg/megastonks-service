@@ -339,6 +339,18 @@ namespace Megastonks.Services
                 _context.RemoveRange(tribeInviteCodes);
 
                 //3. Delete all messages
+                foreach (var message in messages)
+                {
+                    var messageContext = _context.Message
+                        .Include(x => x.Context)
+                        .Where(x => x.Context.Id == message.Id)
+                        .FirstOrDefault();
+                    if (messageContext != null)
+                    {
+                        messageContext.Context = null;
+                        _context.Update(messageContext);
+                    }
+                }
                 _context.RemoveRange(messages);
 
                 //4. Delete Account
