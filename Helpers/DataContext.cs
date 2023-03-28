@@ -8,7 +8,7 @@ namespace Megastonks.Helpers
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Tribe> Tribes { get; set; }
         public DbSet<TribeInviteCode> TribeInviteCodes { get; set; }
-        public DbSet<Message> Message { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
         private readonly IConfiguration Configuration;
 
