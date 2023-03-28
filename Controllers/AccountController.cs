@@ -71,6 +71,14 @@ namespace Megastonks.Controllers
             return Ok(response);
         }
 
+        [Authorize]
+        [HttpDelete]
+        public ActionResult<EmptyResponse> DeleteAccount()
+        {
+            var response = _accountService.DeleteAccount(Account);
+            return Ok(response);
+        }
+
         private string ipAddress()
         {
             if (Request.Headers.ContainsKey("X-Forwarded-For"))

@@ -9,6 +9,7 @@ using Megastonks.Helpers;
 using Megastonks.Models.Account;
 using Megastonks.Entities;
 using Megastonks.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Megastonks.Services
 {
@@ -21,6 +22,7 @@ namespace Megastonks.Services
         string UpdateName(Account account, string fullName);
         Uri UpdateProfilePhoto(Account account, string photoUrl);
         EmptyResponse UpdateDeviceToken(Account account, DeviceType deviceType, string deviceToken);
+        EmptyResponse DeleteAccount(Account account);
     }
 
     public class AccountService : IAccountService
@@ -28,17 +30,20 @@ namespace Megastonks.Services
         private readonly ILogger<AccountService> _logger;
         private readonly DataContext _context;
         private readonly IMapper _mapper;
+        private readonly ITribeService _tribeService;
         private readonly AppSettings _appSettings;
 
         public AccountService(
             ILogger<AccountService> logger,
             DataContext context,
             IMapper mapper,
+            ITribeService tribeService,
             IOptions<AppSettings> appSettings)
         {
             _logger = logger;
             _context = context;
             _mapper = mapper;
+            _tribeService = tribeService;
             _appSettings = appSettings.Value;
         }
 
@@ -287,6 +292,63 @@ namespace Megastonks.Services
                 return new EmptyResponse();
             }
             catch(Exception e)
+            {
+                _logger.LogError($"{e.Message} \n {e.StackTrace}");
+                throw new AppException(e.Message);
+            }
+        }
+
+        public EmptyResponse DeleteAccount(Account account)
+        {
+            try
+            {
+                /*
+                STEPS TO DELETE A USER
+                    1. Remove from Tribe
+                    2. Delete Tribe Invite Codes
+                    3. Delete all Messages
+                    4. Delete Account
+                 */
+                var user = _context.Accounts.Find(account.Id);
+
+                if (user == null)
+                {
+                    throw new AppException("Account not found");
+                }
+
+                var messages = _context.Message
+                    .Include(x => x.Sender)
+                    .Where(x => x.Sender == account)
+                    .ToArray();
+
+                var tribeInviteCodes = _context.TribeInviteCodes
+                    .Where(x => x.Account == account)
+                    .ToArray();
+
+                var tribes = _context.Tribes
+                    .Where(x => x.TribeMembers.Any(y => y.Account == account))
+                    .ToArray();
+
+                //1. Remove from Tribe
+                foreach (var tribe in tribes)
+                {
+                    _tribeService.LeaveTribe(account, tribe.Id.ToString());
+                }
+
+                //2. Delete all Tribe Invite Codes
+                _context.RemoveRange(tribeInviteCodes);
+
+                //3. Delete all messages
+                _context.RemoveRange(messages);
+
+                //4. Delete Account
+                _context.Remove(user);
+
+                _context.SaveChanges();
+
+                return new EmptyResponse();
+            }
+            catch (Exception e)
             {
                 _logger.LogError($"{e.Message} \n {e.StackTrace}");
                 throw new AppException(e.Message);
