@@ -53,6 +53,7 @@
     <None Remove="Entities\Message\" />
     <None Remove="Models\Message\" />
     <None Remove="Hubs\" />
+    <None Remove="Migrations\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Middleware\" />
@@ -67,5 +68,6 @@
     <Folder Include="Entities\Message\" />
     <Folder Include="Models\Message\" />
     <Folder Include="Hubs\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 </Project>
