@@ -54,6 +54,15 @@ namespace Megastonks.Controllers
             return Ok(result);
         }
 
+        //Need to Update.
+        //The block request should either block the user for the current user or block the user from ever joining the Tribe
+        [HttpPost("block")]
+        public ActionResult<SuccessResponse> BlockTribeMember(string id, string memberId)
+        {
+            var result = _tribeService.RemoveFromTribe(Account, id, memberId);
+            return Ok(result);
+        }
+
         [HttpPost("remove")]
         public ActionResult<SuccessResponse> RemoveFromTribe(string id, string memberId)
         {
