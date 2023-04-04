@@ -19,6 +19,7 @@ namespace Megastonks.Services
         EmptyResponse PostMessage(Account account, PostMessageRequest model);
         void AddEventMessage(Account account, Tribe tribe, string eventTitle);
         List<Guid> GetAllowedTeaRecipients(Account account);
+        EmptyResponse DeleteExpiredMessages();
     }
 
     public class MessageService : IMessageService
@@ -349,6 +350,42 @@ namespace Megastonks.Services
                     }
                     return allowedTribeIds;
                 }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"{e.Message} \n {e.StackTrace}");
+                throw new AppException(e.Message);
+            }
+        }
+
+        public EmptyResponse DeleteExpiredMessages()
+        {
+            try
+            {
+                var expiredMessages = _context.Messages
+                    .Include(x => x.Context)
+                    .Where(x => x.TimeStamp <= DateTime.UtcNow.AddHours(-messageExpiryInHours))
+                    .ToArray();
+
+                if (expiredMessages == null)
+                {
+                    throw new AppException("No Expired Messages");
+                }
+
+                //Remove context from the message first
+                foreach (var message in expiredMessages)
+                {
+                    if (message.Context != null)
+                    {
+                        message.Context = null;
+                        _context.Update(message);
+                    }
+                }
+
+                _context.RemoveRange(expiredMessages);
+                _context.SaveChanges();
+
+                return new EmptyResponse();
             }
             catch (Exception e)
             {
