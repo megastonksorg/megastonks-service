@@ -63,7 +63,7 @@ namespace Megastonks.Controllers
             return Ok(result);
         }
 
-        [HttpDelete]
+        [HttpDelete("all")]
         public ActionResult<EmptyResponse> DeleteExpiredMessage()
         {
             var result = _messageService.DeleteExpiredMessages();
