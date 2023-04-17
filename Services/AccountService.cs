@@ -382,7 +382,7 @@ namespace Megastonks.Services
                     new Claim("id", account.Id.ToString()),
                     new Claim(ClaimTypes.Role, account.Role.ToString())
                 }),
-                Expires = DateTime.UtcNow.AddDays(4),
+                Expires = DateTime.UtcNow.AddMinutes(10),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -394,7 +394,7 @@ namespace Megastonks.Services
             return new RefreshToken
             {
                 Token = randomTokenString(),
-                Expires = DateTime.UtcNow.AddDays(10),
+                Expires = DateTime.UtcNow.AddDays(30),
                 Created = DateTime.UtcNow,
                 CreatedByIp = ipAddress,
                 RevokedByIp = "",
