@@ -273,9 +273,19 @@ namespace Megastonks.Services
                 _context.SaveChanges();
 
                 sendTohub(tribe, newMessage);
-
+                
                 //Send Push Notifications
-                string notificationBody = newMessage.Tag == MessageTag.tea ? "Hot ☕️" : $"Message from {account.FullName}";
+                string messageType = "";
+                switch (newMessage.Type)
+                {
+                    case MessageType.image:
+                        messageType = "picture";
+                        break;
+                    case MessageType.video:
+                        messageType = "video";
+                        break;
+                }
+                string notificationBody = newMessage.Tag == MessageTag.tea ? $"Someone shared a {messageType} 👀" : $"Message from {account.FullName}";
                 _pushNotitificationService.SendPushToTribe(account, tribe, newMessage.Id, messageTag, notificationBody);
 
                 return new EmptyResponse();
