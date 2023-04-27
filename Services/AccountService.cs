@@ -394,7 +394,7 @@ namespace Megastonks.Services
             return new RefreshToken
             {
                 Token = randomTokenString(),
-                Expires = DateTime.UtcNow.AddDays(30),
+                Expires = DateTime.UtcNow.AddDays(365),
                 Created = DateTime.UtcNow,
                 CreatedByIp = ipAddress,
                 RevokedByIp = "",
