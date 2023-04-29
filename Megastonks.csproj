@@ -26,6 +26,7 @@
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.4" />
     <PackageReference Include="CorePush" Version="4.1.0" />
+    <PackageReference Include="Microsoft.Azure.SignalR" Version="1.21.2" />
   </ItemGroup>
 
   <ItemGroup>

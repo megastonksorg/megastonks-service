@@ -9,6 +9,7 @@ using System.Text;
 using System.IdentityModel.Tokens.Jwt;
 using Megastonks.Entities;
 using Megastonks.Hubs;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,7 +36,7 @@ builder.Services.AddScoped<IMessageService, MessageService>();
 builder.Services.AddScoped<IPushNotificationService, PushNotificationService>();
 builder.Services.AddHttpClient<ApnSender>();
 
-builder.Services.AddSignalR();
+builder.Services.AddSignalR().AddAzureSignalR(builder.Configuration.GetConnectionString("AzureSignalRService"));
 
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
