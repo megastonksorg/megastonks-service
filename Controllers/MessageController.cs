@@ -28,6 +28,13 @@ namespace Megastonks.Controllers
             return Ok(result);
         }
 
+        [HttpGet("id")]
+        public ActionResult<MessageResponse> GetMessage(string messageId)
+        {
+            var result = _messageService.GetMessage(Account, messageId);
+            return Ok(result);
+        }
+
         [HttpPost]
         public ActionResult<EmptyResponse> PostMessage([FromBody] PostMessageRequest model)
         {

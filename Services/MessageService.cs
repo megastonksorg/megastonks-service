@@ -12,6 +12,7 @@ namespace Megastonks.Services
 {
     public interface IMessageService
     {
+        MessageResponse GetMessage(Account account, string messageId);
         List<MessageResponse> GetMessages(Account account, string tribeId);
         SuccessResponse DeleteMessage(Account account, string messageId);
         List<string> GetViewers(Account account, string messageId);
@@ -80,6 +81,40 @@ namespace Megastonks.Services
                     }).ToList();
 
                 return messages;
+            }
+            catch (Exception e)
+            {
+                _logger.LogError($"{e.Message} \n {e.StackTrace}");
+                throw new AppException(e.Message);
+            }
+        }
+
+        public MessageResponse GetMessage(Account account, string messageId)
+        {
+            try
+            {
+                var message = _context.Messages
+                    .AsNoTracking()
+                    .Where(x => x.Id == Guid.Parse(messageId))
+                    .Select(x => new MessageResponse
+                    {
+                        Id = x.Id,
+                        Body = x.Body,
+                        Caption = x.Caption,
+                        Type = x.Type,
+                        SenderWalletAddress = x.Sender == null ? serverSender : x.Sender.WalletAddress,
+                        Tag = x.Tag,
+                        Context = x.Context == null ? null : x.Context.Id,
+                        Keys = x.Keys.Where(y => y.PublicKey == account.PublicKey).ToList(),
+                        Expires = x.Expires,
+                        TimeStamp = x.TimeStamp
+                    }).FirstOrDefault();
+
+                if (message == null)
+                {
+                    throw new AppException("Message Not Found");
+                }
+                return message;
             }
             catch (Exception e)
             {
