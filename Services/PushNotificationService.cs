@@ -37,6 +37,9 @@ namespace Megastonks.Services
 
                 [JsonPropertyName("mutable-content")]
                 public int MutableContent { get; set; }
+
+                [JsonPropertyName("content-available")]
+                public int ContentAvailable { get; set; }
             }
 
             public ApsPayload Aps { get; set; }
@@ -98,7 +101,8 @@ namespace Megastonks.Services
                                         Body = body
                                     },
                                     Sound = "pushNotification.mp3",
-                                    MutableContent = 1
+                                    MutableContent = 1,
+                                    ContentAvailable = 1
                                 },
                                 TribeId = data.TribeId,
                                 MessageTag = data.MessageTag,
