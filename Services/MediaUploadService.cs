@@ -17,7 +17,7 @@ namespace Megastonks.Services
         private readonly int videoSizeLimit = 60_000_000; //60MB in bytes
         private readonly string imageSizeLimitDescription = "2MB"; //2MB
         private readonly string videoSizeLimitDescription = "60MB"; //60MB
-        private readonly string imageFileExtension = ".png";
+        private readonly string imageFileExtension = ".jpeg";
         private readonly string videoFileExtension = ".mp4";
 
         private readonly string connectionStringSection = "AzureBlobStorage";
