@@ -17,7 +17,7 @@ namespace Megastonks.Services
         SuccessResponse DeleteMessage(Account account, string messageId);
         List<string> GetViewers(Account account, string messageId);
         EmptyResponse MarkAsViewed(Account account, string messageId);
-        EmptyResponse PostMessage(Account account, PostMessageRequest model);
+        MessageResponse PostMessage(Account account, PostMessageRequest model);
         void AddEventMessage(Account account, Tribe tribe, string eventTitle);
         List<Guid> GetAllowedTeaRecipients(Account account);
         EmptyResponse DeleteExpiredMessages();
@@ -241,7 +241,7 @@ namespace Megastonks.Services
             }
         }
 
-        public EmptyResponse PostMessage(Account account, PostMessageRequest model)
+        public MessageResponse PostMessage(Account account, PostMessageRequest model)
         {
             try
             {
@@ -323,7 +323,7 @@ namespace Megastonks.Services
                 string notificationBody = newMessage.Tag == MessageTag.tea ? $"Someone shared a {messageType} 👀" : $"Message from {account.FullName}";
                 _pushNotitificationService.SendPushToTribe(account, tribe, newMessage.Id, messageTag, notificationBody);
 
-                return new EmptyResponse();
+                return mapMessageToMessageResponse(newMessage);
             }
             catch (Exception e)
             {

@@ -36,7 +36,7 @@ namespace Megastonks.Controllers
         }
 
         [HttpPost]
-        public ActionResult<EmptyResponse> PostMessage([FromBody] PostMessageRequest model)
+        public ActionResult<MessageResponse> PostMessage([FromBody] PostMessageRequest model)
         {
             _messageService.PostMessage(Account, model);
             return Ok(new EmptyResponse());
