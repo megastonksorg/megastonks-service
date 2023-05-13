@@ -38,8 +38,8 @@ namespace Megastonks.Controllers
         [HttpPost]
         public ActionResult<MessageResponse> PostMessage([FromBody] PostMessageRequest model)
         {
-            _messageService.PostMessage(Account, model);
-            return Ok(new EmptyResponse());
+            var result = _messageService.PostMessage(Account, model);
+            return Ok(result);
         }
 
         [HttpGet("viewers")]
