@@ -154,7 +154,7 @@ namespace Megastonks.Services
                     Account = account,
                     Tribe = tribe,
                     Created = DateTime.UtcNow,
-                    Expires = DateTime.UtcNow.AddMinutes(6)
+                    Expires = DateTime.UtcNow.AddMinutes(60)
                 };
 
                 //Remove All expired invite codes
