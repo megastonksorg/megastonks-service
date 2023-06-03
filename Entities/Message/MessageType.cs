@@ -9,6 +9,7 @@ namespace Megastonks.Entities
         text,
         image,
         video,
+        note,
         systemEvent
     }
 }
