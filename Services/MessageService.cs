@@ -314,13 +314,16 @@ namespace Megastonks.Services
                 switch (newMessage.Type)
                 {
                     case MessageType.image:
-                        messageType = "picture";
+                        messageType = "picture 📸";
                         break;
                     case MessageType.video:
-                        messageType = "video";
+                        messageType = "video 🎥";
+                        break;
+                    case MessageType.note:
+                        messageType = "note 📝";
                         break;
                 }
-                string notificationBody = newMessage.Tag == MessageTag.tea ? $"Someone shared a {messageType} 👀" : $"Message from {account.FullName}";
+                string notificationBody = newMessage.Tag == MessageTag.tea ? $"Someone shared a {messageType}" : $"Message from {account.FullName}";
                 _pushNotitificationService.SendPushToTribe(account, tribe, newMessage.Id, messageTag, notificationBody);
 
                 return mapMessageToMessageResponse(newMessage);
